@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
+import { useRef } from "react";
 
 const designDirections = [
   {
@@ -39,6 +40,33 @@ const benefits = [
   { title: "Опыт по всей России", icon: "map" },
   { title: "Сильная инженерная команда", icon: "like" },
   { title: "Подтвержденное качество", icon: "award" }
+] as const;
+
+const materials = [
+  {
+    title: "Референс 2021-2025 гг. (СПОРТ)",
+    type: "DOCX",
+    description: "Референс-лист выполненных проектов ООО «Центр проектирования Дельта».",
+    image: "/assets/project-mfus.png",
+    href: "docs/reference-2021-2025-sport.docx",
+    cta: "Открыть референс"
+  },
+  {
+    title: "Брендбук TVAYT",
+    type: "PDF",
+    description: "Фирменная айдентика: логотип, цвета, шрифты, паттерны и правила использования.",
+    image: "/assets/cover-brandbook.png",
+    href: "docs/brandbook-tvayt.pdf",
+    cta: "Открыть брендбук"
+  },
+  {
+    title: "Портфолио 2025",
+    type: "PDF",
+    description: "Ключевые объекты, реализованные кейсы и визуальные примеры оснащения площадок.",
+    image: "/assets/cover-portfolio.png",
+    href: "docs/portfolio-2025-web.pdf",
+    cta: "Открыть портфолио"
+  }
 ] as const;
 
 const easeCurve: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -165,17 +193,52 @@ function BenefitIcon({ kind }: { kind: "map" | "like" | "award" }) {
 }
 
 export default function Home() {
+  const materialsTrackRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollMaterials = (direction: "left" | "right") => {
+    if (!materialsTrackRef.current) {
+      return;
+    }
+    const offset = direction === "right" ? 430 : -430;
+    materialsTrackRef.current.scrollBy({ left: offset, behavior: "smooth" });
+  };
+
+  const scrollToMaterials = () => {
+    document.getElementById("materials")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <main className="bg-delta-paper text-delta-ink">
+      <button
+        type="button"
+        onClick={scrollToMaterials}
+        className="fixed right-3 top-3 z-[80] flex items-center gap-2 rounded-full border border-[rgba(38,38,116,0.20)] bg-[linear-gradient(135deg,var(--delta-blue),var(--delta-violet))] px-3 py-2 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(38,38,116,0.24)] transition hover:translate-y-[-1px] hover:shadow-[0_18px_36px_rgba(38,38,116,0.32)] md:right-6 md:top-4 md:px-4 md:py-2.5"
+      >
+        <span className="inline-flex h-2.5 w-2.5 rounded-full bg-white/80" />
+        <span>Портфолио</span>
+      </button>
+
       <header className="sticky top-0 z-50 border-b border-black/10 bg-[rgba(241,241,241,0.9)] backdrop-blur">
-        <div className={`${containerClass} flex h-16 items-center justify-between`}>
-          <p className="font-[var(--font-raleway)] text-lg font-semibold tracking-[0.08em]">ЦП ДЕЛЬТА</p>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-black/70 md:flex">
+        <div className={`${containerClass} flex h-16 items-center justify-between pr-20 md:h-20 md:pr-40`}>
+          <a href="#about" className="flex items-center">
+            <Image
+              src="/assets/logo-horizontal.png"
+              alt="Логотип Дельта"
+              width={270}
+              height={110}
+              priority
+              className="h-9 w-auto object-contain md:h-11"
+            />
+          </a>
+          <nav className="hidden items-center gap-5 text-sm font-medium text-black/70 md:flex">
             <a href="#about" className="transition hover:text-black">
               О компании
             </a>
             <a href="#projects" className="transition hover:text-black">
               Мы проектируем
+            </a>
+            <a href="#materials" className="transition hover:text-black">
+              Материалы
             </a>
             <a href="#partners" className="transition hover:text-black">
               Партнеры
@@ -184,7 +247,7 @@ export default function Home() {
         </div>
       </header>
 
-      <section id="about" className="border-b border-black/10">
+      <section id="about" className="scroll-mt-24 border-b border-black/10">
         <div className={`${containerClass} py-20 md:py-24`}>
           <motion.div
             className="grid gap-12 md:grid-cols-[1fr_1.35fr] md:gap-16"
@@ -212,7 +275,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="projects" className="relative border-b border-black/10">
+      <section id="projects" className="scroll-mt-24 relative border-b border-black/10">
         <div className="absolute inset-0 blueprint-grid" />
         <div className="absolute inset-0 bg-white/70" />
         <div className={`${containerClass} relative py-20 md:py-24`}>
@@ -243,7 +306,7 @@ export default function Home() {
                 </div>
                 <button
                   type="button"
-                  className="h-12 w-32 rounded-full bg-delta-accent px-5 text-[13px] font-semibold text-black transition hover:brightness-95 md:h-16 md:w-40 md:text-[19px]"
+                  className="h-12 w-32 rounded-full bg-delta-blue px-5 text-[13px] font-semibold text-white shadow-[0_10px_24px_rgba(38,38,116,0.18)] transition hover:bg-delta-violet md:h-16 md:w-40 md:text-[19px]"
                 >
                   подробнее
                 </button>
@@ -274,7 +337,7 @@ export default function Home() {
               <span className="select-none text-6xl leading-none text-white/85 md:text-7xl">↘</span>
               <button
                 type="button"
-                className="min-h-[66px] min-w-[240px] rounded-lg border border-black/5 bg-white px-8 text-[16px] font-semibold text-delta-soft-orange transition hover:brightness-95 md:min-h-[76px] md:min-w-[320px] md:text-[25px]"
+                className="min-h-[66px] min-w-[240px] rounded-lg border border-[rgba(38,38,116,0.10)] bg-white px-8 text-[16px] font-semibold text-delta-blue transition hover:bg-delta-fog md:min-h-[76px] md:min-w-[320px] md:text-[25px]"
               >
                 Обсудить проект
               </button>
@@ -298,13 +361,27 @@ export default function Home() {
                 whileInView="show"
                 viewport={{ once: true, amount: 0.3 }}
                 custom={0.1 + idx * 0.06}
-                className="rounded-2xl border border-black/10 bg-white p-4"
+                className={`rounded-2xl border p-4 ${
+                  step.id === 3
+                    ? "border-[rgba(141,52,188,0.30)] bg-[rgba(141,52,188,0.06)] shadow-[inset_0_0_0_1px_rgba(141,52,188,0.08)]"
+                    : "border-black/10 bg-white"
+                }`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+                <div className="grid grid-cols-[auto_auto_1fr] items-start gap-3">
+                  <span
+                    className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white ${
+                      step.id === 3 ? "bg-delta-violet ring-4 ring-[rgba(141,52,188,0.15)]" : "bg-delta-charcoal"
+                    }`}
+                  >
                     {step.id}
                   </span>
-                  <span className="text-black/80">
+                  <span
+                    className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border ${
+                      step.id === 3
+                        ? "border-[rgba(141,52,188,0.20)] bg-[rgba(141,52,188,0.10)] text-delta-violet"
+                        : "border-black/6 bg-black/[0.04] text-black/80"
+                    }`}
+                  >
                     <ProcessIcon kind={step.icon} />
                   </span>
                   <p className="text-[17px] font-semibold leading-tight text-black">{step.title}</p>
@@ -324,7 +401,7 @@ export default function Home() {
                 variants={roadmapPath}
                 d="M180 150 C 320 50, 430 230, 600 170 C 760 120, 820 260, 700 300 C 560 350, 490 380, 560 460 C 640 550, 680 620, 560 650 C 430 680, 360 670, 250 620"
                 fill="none"
-                stroke="rgba(0,0,0,0.82)"
+                stroke="rgba(38,38,116,0.86)"
                 strokeWidth="4"
                 strokeDasharray="15 17"
                 strokeLinecap="round"
@@ -339,7 +416,11 @@ export default function Home() {
                 className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${dot.x}%`, top: `${dot.y}%` }}
               >
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-black text-base font-black text-white ring-2 ring-white/85">
+                <span
+                  className={`inline-flex h-11 w-11 items-center justify-center rounded-full text-base font-black text-white ${
+                    dot.id === 3 ? "bg-delta-violet ring-4 ring-[rgba(141,52,188,0.15)]" : "bg-delta-charcoal ring-2 ring-white/85"
+                  }`}
+                >
                   {dot.id}
                 </span>
               </motion.div>
@@ -350,16 +431,89 @@ export default function Home() {
                 key={step.id}
                 variants={roadmapStage}
                 custom={idx}
-                className="absolute z-20 w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-black/10 bg-white px-5 py-4 shadow-[0_12px_34px_rgba(0,0,0,0.08)]"
+                className={`absolute z-20 w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-3xl border px-5 py-4 shadow-[0_12px_34px_rgba(0,0,0,0.08)] ${
+                  step.id === 3
+                    ? "border-[rgba(141,52,188,0.30)] bg-[linear-gradient(180deg,rgba(141,52,188,0.10),rgba(36,120,196,0.04))] shadow-[0_14px_38px_rgba(38,38,116,0.12),inset_0_0_0_1px_rgba(141,52,188,0.08)]"
+                    : "border-black/10 bg-white"
+                }`}
                 style={{ left: `${step.x}%`, top: `${step.y}%` }}
               >
-                <div className="mb-2 text-black">
+                <div
+                  className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl border ${
+                    step.id === 3
+                      ? "border-[rgba(141,52,188,0.20)] bg-[rgba(141,52,188,0.10)] text-delta-violet"
+                      : "border-black/6 bg-black/[0.04] text-black/80"
+                  }`}
+                >
                   <ProcessIcon kind={step.icon} />
                 </div>
                 <p className="text-[16px] font-semibold leading-[1.22] text-black">{step.title}</p>
               </motion.article>
             ))}
           </motion.div>
+        </div>
+      </section>
+
+      <section id="materials" className="scroll-mt-24 border-b border-black/10 bg-[rgba(38,38,116,0.03)]">
+        <div className={`${containerClass} py-20 md:py-24`}>
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="font-[var(--font-raleway)] text-4xl font-semibold tracking-[-0.01em] md:text-[58px]">
+              Референсы, брендбук и портфолио
+            </h2>
+            <div className="hidden items-center gap-2 md:flex">
+              <button
+                type="button"
+                onClick={() => scrollMaterials("left")}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(38,38,116,0.15)] bg-white text-xl text-delta-blue transition hover:bg-delta-blue hover:text-white"
+                aria-label="Листать влево"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollMaterials("right")}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(38,38,116,0.15)] bg-white text-xl text-delta-blue transition hover:bg-delta-blue hover:text-white"
+                aria-label="Листать вправо"
+              >
+                →
+              </button>
+            </div>
+          </div>
+
+          <p className="mt-4 text-sm text-black/55 md:text-base">Листайте карточки вправо, чтобы посмотреть все материалы.</p>
+
+          <div ref={materialsTrackRef} className="no-scrollbar mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">
+            {materials.map((item, idx) => (
+              <motion.a
+                key={item.title}
+                variants={rise}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.35 }}
+                custom={0.1 + idx * 0.08}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group min-w-[86%] snap-start overflow-hidden rounded-[26px] border border-black/10 bg-white shadow-[0_14px_32px_rgba(0,0,0,0.08)] transition hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(38,38,116,0.16)] md:min-w-[420px]"
+              >
+                <div className="relative h-[220px]">
+                  <Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(38,38,116,0.75),rgba(38,38,116,0.15),transparent)]" />
+                  <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-xs font-semibold tracking-[0.08em] text-delta-blue">
+                    {item.type}
+                  </span>
+                </div>
+                <div className="space-y-3 p-5">
+                  <h3 className="text-xl font-semibold leading-tight text-black">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-black/65">{item.description}</p>
+                  <div className="flex items-center justify-between border-t border-black/8 pt-3">
+                    <span className="text-sm font-semibold text-delta-blue">{item.cta}</span>
+                    <span className="text-lg text-delta-blue transition group-hover:translate-x-1">↗</span>
+                  </div>
+                </div>
+              </motion.a>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -379,7 +533,7 @@ export default function Home() {
                 custom={0.1 + idx * 0.08}
                 className="rounded-2xl bg-white/[0.55] px-4 py-8 text-center"
               >
-                <div className="mx-auto inline-flex h-[112px] w-[112px] items-center justify-center rounded-full border-[3px] border-delta-soft-orange text-delta-soft-orange">
+                <div className="mx-auto inline-flex h-[112px] w-[112px] items-center justify-center rounded-full border-[3px] border-delta-violet text-delta-violet">
                   <BenefitIcon kind={benefit.icon} />
                 </div>
                 <p className="mt-7 text-[16px] font-medium text-black/[0.88] md:text-[28px]">{benefit.title}</p>

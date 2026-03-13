@@ -3,17 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --delta-paper: #f1f1f1;
-  --delta-ink: #0d0d0e;
-  --delta-muted: #58595d;
-  --delta-accent: #f4bf5f;
-  --delta-soft-orange: #f08e76;
+  --delta-paper: #f3f3f5;
+  --delta-ink: #1d1c21;
+  --delta-muted: #5f6270;
+  --delta-accent: #8d34bc;
   --delta-charcoal: #1d1c21;
   --delta-violet: #8d34bc;
   --delta-blue: #262674;
   --delta-azure: #2478c4;
-  --delta-fog: #d9dadb;
-  --delta-cta: #66676b;
+  --delta-fog: #dfe4ef;
+  --delta-surface: rgba(38, 38, 116, 0.05);
 }
 
 * {
@@ -47,7 +46,7 @@ h4 {
 }
 
 .bg-delta-cta {
-  background: var(--delta-cta);
+  background: linear-gradient(135deg, var(--delta-charcoal) 0%, var(--delta-blue) 48%, var(--delta-violet) 100%);
 }
 
 .text-delta-ink {
@@ -58,10 +57,6 @@ h4 {
   background: var(--delta-accent);
 }
 
-.text-delta-soft-orange {
-  color: var(--delta-soft-orange);
-}
-
 .delta-grid {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
@@ -70,21 +65,21 @@ h4 {
 }
 
 .blueprint-grid {
-  background-color: #ececec;
+  background-color: var(--delta-paper);
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(38, 38, 116, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 38, 116, 0.06) 1px, transparent 1px),
     repeating-linear-gradient(
       150deg,
-      rgba(0, 0, 0, 0.04) 0,
-      rgba(0, 0, 0, 0.04) 2px,
+      rgba(36, 120, 196, 0.04) 0,
+      rgba(36, 120, 196, 0.04) 2px,
       transparent 2px,
       transparent 86px
     ),
     repeating-linear-gradient(
       40deg,
-      rgba(0, 0, 0, 0.03) 0,
-      rgba(0, 0, 0, 0.03) 1px,
+      rgba(141, 52, 188, 0.04) 0,
+      rgba(141, 52, 188, 0.04) 1px,
       transparent 1px,
       transparent 72px
     );
@@ -93,4 +88,13 @@ h4 {
     48px 48px,
     100% 100%,
     100% 100%;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
