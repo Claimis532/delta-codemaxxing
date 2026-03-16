@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { motion, type Variants } from "framer-motion";
@@ -46,24 +47,24 @@ const materials = [
     title: "Референс 2021-2025 гг. (СПОРТ)",
     type: "DOCX",
     description: "Референс-лист выполненных проектов ООО «Центр проектирования Дельта».",
-    image: "assets/project-mfus.png",
-    href: "docs/reference-2021-2025-sport.docx",
+    image: "./assets/project-mfus.png",
+    href: "./docs/reference-2021-2025-sport.docx",
     cta: "Открыть референс"
   },
   {
     title: "Брендбук TVAYT",
     type: "PDF",
     description: "Фирменная айдентика: логотип, цвета, шрифты, паттерны и правила использования.",
-    image: "assets/cover-brandbook.png",
-    href: "docs/brandbook-tvayt.pdf",
+    image: "./assets/cover-brandbook.png",
+    href: "./docs/brandbook-tvayt.pdf",
     cta: "Открыть брендбук"
   },
   {
     title: "Портфолио 2025",
     type: "PDF",
     description: "Ключевые объекты, реализованные кейсы и визуальные примеры оснащения площадок.",
-    image: "assets/cover-portfolio.png",
-    href: "docs/portfolio-2025-web.pdf",
+    image: "./assets/cover-portfolio.png",
+    href: "./docs/portfolio-2025-web.pdf",
     cta: "Открыть портфолио"
   }
 ] as const;
@@ -110,14 +111,16 @@ const roadmapStage: Variants = {
 const containerClass = "mx-auto w-full max-w-[1120px] px-5 md:px-8";
 
 function ProcessIcon({
-  kind
+  kind,
+  className = "h-8 w-8"
 }: {
   kind: "collect" | "contract" | "design" | "expertise" | "docs" | "supervise";
+  className?: string;
 }) {
   switch (kind) {
     case "collect":
       return (
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.7">
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
           <path d="M3 7.5h18v12H3z" />
           <path d="M8 7.5V3h8v4.5" />
           <path d="M8 12h8M8 16h5" />
@@ -125,7 +128,7 @@ function ProcessIcon({
       );
     case "contract":
       return (
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.7">
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
           <path d="M6 3h8l4 4v14H6z" />
           <path d="M14 3v4h4M9 12h6M9 16h4" />
           <path d="m14.5 14.5 4-4 1.5 1.5-4 4-2 .5z" />
@@ -133,14 +136,14 @@ function ProcessIcon({
       );
     case "design":
       return (
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.7">
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
           <path d="M4 19h16M6 16l8-8 4 4-8 8H6z" />
           <path d="M9 8 7 6M16 5v4M19 8h-4" />
         </svg>
       );
     case "expertise":
       return (
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.7">
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
           <path d="M6 3h10l2 2v16H6z" />
           <path d="M9 10h6M9 14h6" />
           <circle cx="9" cy="18" r="2.2" />
@@ -149,7 +152,7 @@ function ProcessIcon({
       );
     case "docs":
       return (
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.7">
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
           <path d="M7 5h10v14H7z" />
           <path d="M4 8h10v13H4z" />
           <path d="M10 9h4M10 12h4M10 15h3" />
@@ -157,7 +160,7 @@ function ProcessIcon({
       );
     default:
       return (
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.7">
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
           <circle cx="12" cy="7" r="3" />
           <path d="M12 10v8M6 21l4-6h4l4 6M4 21h16" />
         </svg>
@@ -193,6 +196,14 @@ function BenefitIcon({ kind }: { kind: "map" | "like" | "award" }) {
 
 export default function Home() {
   const materialsTrackRef = useRef<HTMLDivElement | null>(null);
+  const processIconOffsets: Record<(typeof lifecycleSteps)[number]["icon"], string> = {
+    collect: "translate-y-[-0.5px]",
+    contract: "translate-x-[0.5px] translate-y-[-0.5px]",
+    design: "translate-y-[0.5px]",
+    expertise: "translate-x-[0.5px] translate-y-[0.5px]",
+    docs: "translate-x-[0.5px]",
+    supervise: "translate-y-[0.5px]"
+  };
 
   const scrollMaterials = (direction: "left" | "right") => {
     if (!materialsTrackRef.current) {
@@ -220,7 +231,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-black/10 bg-[rgba(241,241,241,0.9)] backdrop-blur">
         <div className={`${containerClass} flex h-16 items-center justify-between pr-20 md:h-20 md:pr-40`}>
           <a href="#about" className="flex items-center">
-            <img src="assets/logo-horizontal.png" alt="Логотип Дельта" className="h-9 w-auto object-contain md:h-11" />
+            <img src="./assets/logo-horizontal.png" alt="Логотип Дельта" className="h-9 w-auto object-contain md:h-11" />
           </a>
           <nav className="hidden items-center gap-5 text-sm font-medium text-black/70 md:flex">
             <a href="#about" className="transition hover:text-black">
@@ -374,7 +385,9 @@ export default function Home() {
                         : "border-black/6 bg-black/[0.04] text-black/80"
                     }`}
                   >
-                    <ProcessIcon kind={step.icon} />
+                    <span className={`inline-flex items-center justify-center ${processIconOffsets[step.icon]}`}>
+                      <ProcessIcon kind={step.icon} className="h-6 w-6" />
+                    </span>
                   </span>
                   <p className="text-[17px] font-semibold leading-tight text-black">{step.title}</p>
                 </div>
@@ -423,23 +436,27 @@ export default function Home() {
                 key={step.id}
                 variants={roadmapStage}
                 custom={idx}
-                className={`absolute z-20 w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-3xl border px-5 py-4 shadow-[0_12px_34px_rgba(0,0,0,0.08)] ${
+                className={`absolute z-20 w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-3xl border px-5 py-5 shadow-[0_12px_34px_rgba(0,0,0,0.08)] ${
                   step.id === 3
                     ? "border-[rgba(141,52,188,0.30)] bg-[linear-gradient(180deg,rgba(141,52,188,0.10),rgba(36,120,196,0.04))] shadow-[0_14px_38px_rgba(38,38,116,0.12),inset_0_0_0_1px_rgba(141,52,188,0.08)]"
                     : "border-black/10 bg-white"
                 }`}
                 style={{ left: `${step.x}%`, top: `${step.y}%` }}
               >
-                <div
-                  className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl border ${
-                    step.id === 3
-                      ? "border-[rgba(141,52,188,0.20)] bg-[rgba(141,52,188,0.10)] text-delta-violet"
-                      : "border-black/6 bg-black/[0.04] text-black/80"
-                  }`}
-                >
-                  <ProcessIcon kind={step.icon} />
+                <div className="flex min-h-[120px] flex-col">
+                  <div
+                    className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl border ${
+                      step.id === 3
+                        ? "border-[rgba(141,52,188,0.20)] bg-[rgba(141,52,188,0.10)] text-delta-violet"
+                        : "border-black/6 bg-black/[0.04] text-black/80"
+                    }`}
+                  >
+                    <span className={`inline-flex items-center justify-center ${processIconOffsets[step.icon]}`}>
+                      <ProcessIcon kind={step.icon} className="h-7 w-7" />
+                    </span>
+                  </div>
+                  <p className="mt-4 max-w-[248px] text-[16px] font-semibold leading-[1.22] text-black">{step.title}</p>
                 </div>
-                <p className="text-[16px] font-semibold leading-[1.22] text-black">{step.title}</p>
               </motion.article>
             ))}
           </motion.div>
@@ -548,7 +565,7 @@ export default function Home() {
             custom={0.12}
             className="mt-12 overflow-hidden rounded-[28px] border border-black/10 bg-white p-3 shadow-[0_16px_36px_rgba(0,0,0,0.08)] md:p-5"
           >
-            <img src="assets/partners-wall.png" alt="Логотипы партнеров компании" className="h-auto w-full rounded-2xl" />
+            <img src="./assets/partners-wall.png" alt="Логотипы партнеров компании" className="h-auto w-full rounded-2xl" />
           </motion.div>
         </div>
       </section>
