@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { useRef } from "react";
 
@@ -47,7 +46,7 @@ const materials = [
     title: "Референс 2021-2025 гг. (СПОРТ)",
     type: "DOCX",
     description: "Референс-лист выполненных проектов ООО «Центр проектирования Дельта».",
-    image: "/assets/project-mfus.png",
+    image: "assets/project-mfus.png",
     href: "docs/reference-2021-2025-sport.docx",
     cta: "Открыть референс"
   },
@@ -55,7 +54,7 @@ const materials = [
     title: "Брендбук TVAYT",
     type: "PDF",
     description: "Фирменная айдентика: логотип, цвета, шрифты, паттерны и правила использования.",
-    image: "/assets/cover-brandbook.png",
+    image: "assets/cover-brandbook.png",
     href: "docs/brandbook-tvayt.pdf",
     cta: "Открыть брендбук"
   },
@@ -63,7 +62,7 @@ const materials = [
     title: "Портфолио 2025",
     type: "PDF",
     description: "Ключевые объекты, реализованные кейсы и визуальные примеры оснащения площадок.",
-    image: "/assets/cover-portfolio.png",
+    image: "assets/cover-portfolio.png",
     href: "docs/portfolio-2025-web.pdf",
     cta: "Открыть портфолио"
   }
@@ -221,14 +220,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-black/10 bg-[rgba(241,241,241,0.9)] backdrop-blur">
         <div className={`${containerClass} flex h-16 items-center justify-between pr-20 md:h-20 md:pr-40`}>
           <a href="#about" className="flex items-center">
-            <Image
-              src="/assets/logo-horizontal.png"
-              alt="Логотип Дельта"
-              width={270}
-              height={110}
-              priority
-              className="h-9 w-auto object-contain md:h-11"
-            />
+            <img src="assets/logo-horizontal.png" alt="Логотип Дельта" className="h-9 w-auto object-contain md:h-11" />
           </a>
           <nav className="hidden items-center gap-5 text-sm font-medium text-black/70 md:flex">
             <a href="#about" className="transition hover:text-black">
@@ -497,7 +489,7 @@ export default function Home() {
                 className="group min-w-[86%] snap-start overflow-hidden rounded-[26px] border border-black/10 bg-white shadow-[0_14px_32px_rgba(0,0,0,0.08)] transition hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(38,38,116,0.16)] md:min-w-[420px]"
               >
                 <div className="relative h-[220px]">
-                  <Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                  <img src={item.image} alt={item.title} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(38,38,116,0.75),rgba(38,38,116,0.15),transparent)]" />
                   <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-xs font-semibold tracking-[0.08em] text-delta-blue">
                     {item.type}
@@ -556,13 +548,7 @@ export default function Home() {
             custom={0.12}
             className="mt-12 overflow-hidden rounded-[28px] border border-black/10 bg-white p-3 shadow-[0_16px_36px_rgba(0,0,0,0.08)] md:p-5"
           >
-            <Image
-              src="/assets/partners-wall.png"
-              alt="Логотипы партнеров компании"
-              width={1600}
-              height={900}
-              className="h-auto w-full rounded-2xl"
-            />
+            <img src="assets/partners-wall.png" alt="Логотипы партнеров компании" className="h-auto w-full rounded-2xl" />
           </motion.div>
         </div>
       </section>
