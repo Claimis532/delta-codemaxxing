@@ -17,7 +17,30 @@ export const lifecycleSteps = [
 ] as const;
 
 export const materials = [
-    { title: "Референс 2021-2025", type: "DOCX", description: "...", image: "./assets/project-mfus.png", href: "#", cta: "Открыть" },
+    {
+        title: "Референс 2021-2025 гг. (СПОРТ)",
+        type: "DOCX",
+        description: "Референс-лист выполненных проектов ООО «Центр проектирования Дельта».",
+        image: "./assets/project-mfus.png",
+        href: "./docs/reference-2021-2025-sport.docx",
+        cta: "Открыть референс"
+    },
+    {
+        title: "Брендбук TVAYT",
+        type: "PDF",
+        description: "Фирменная айдентика: логотип, цвета, шрифты, паттерны и правила использования.",
+        image: "./assets/cover-brandbook.png",
+        href: "./docs/brandbook-tvayt.pdf",
+        cta: "Открыть брендбук"
+    },
+    {
+        title: "Портфолио 2025",
+        type: "PDF",
+        description: "Ключевые объекты, реализованные кейсы и визуальные примеры оснащения площадок.",
+        image: "./assets/cover-portfolio.png",
+        href: "./docs/portfolio-2025-web.pdf",
+        cta: "Открыть портфолио"
+    },
 ] as const;
 
 export const benefits = [

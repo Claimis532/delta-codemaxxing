@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { roadmapPath, roadmapDot, roadmapStage } from "@/lib/animation";
+import { roadmapPath, roadmapDot, roadmapStage, rise } from "@/lib/animation";
 import { lifecycleSteps, processDots, containerClass } from "@/constants/content";
 
 function ProcessIcon({ kind }: { kind: string }) {
@@ -55,17 +55,41 @@ export const LifecycleSection = () => {
                     Жизненный цикл проекта
                 </h2>
 
+                {/* --- МОБИЛЬНАЯ ВЕРСИЯ --- */}
+                <div className="mt-10 space-y-4 md:hidden">
+                    {lifecycleSteps.map((step, idx) => (
+                        <motion.article
+                            key={step.id}
+                            variants={rise}
+                            initial="hidden"
+                            whileInView="show"
+                            viewport={{ once: true, amount: 0.3 }}
+                            custom={0.1 + idx * 0.06}
+                            className={`rounded-2xl border p-4 ${
+                                step.id === 3 ? "border-purple-200 bg-purple-50/30" : "border-black/10 bg-white"
+                            }`}
+                        >
+                            <div className="flex gap-3 items-center">
+                                <span className="h-8 w-8 shrink-0 rounded-full bg-delta-charcoal text-white flex items-center justify-center text-sm font-bold">
+                                    {step.id}
+                                </span>
+                                <p className="font-semibold text-black">{step.title}</p>
+                                <div className="ml-auto opacity-30">
+                                    <ProcessIcon kind={step.icon} />
+                                </div>
+                            </div>
+                        </motion.article>
+                    ))}
+                </div>
+
+                {/* --- ТВОЯ ДЕСКТОПНАЯ ВЕРСИЯ (БЕЗ ИЗМЕНЕНИЙ) --- */}
                 <div className="relative mt-12 hidden md:block">
-                    {/* Обертка с фиксированной высотой.
-                      ВАЖНО: overflow-visible, чтобы тени карточек не обрезались
-                    */}
                     <motion.div
                         className="relative h-[1860px] w-full overflow-visible rounded-[30px] border border-black/10 bg-[#f7f7f7]"
                         initial="hidden"
                         whileInView="show"
                         viewport={{ once: true, amount: 0.2 }}
                     >
-                        {/* SVG Линия */}
                         <svg
                             viewBox="0 0 1100 760"
                             className="absolute inset-0 h-full w-full pointer-events-none"
@@ -90,7 +114,7 @@ export const LifecycleSection = () => {
                                 style={{
                                     left: `${dot.x}%`,
                                     top: `${dot.y}%`,
-                                    transform: 'translate(-50%, -50%)' // Ручное центрирование
+                                    transform: 'translate(-50%, -50%)'
                                 }}
                             >
                                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-delta-charcoal text-white font-bold">
@@ -99,7 +123,6 @@ export const LifecycleSection = () => {
                             </motion.div>
                         ))}
 
-                        {/* КАРТОЧКИ */}
                         {lifecycleSteps.map((step, idx) => (
                             <motion.article
                                 key={step.id}
@@ -109,7 +132,7 @@ export const LifecycleSection = () => {
                                 style={{
                                     left: `${step.x}%`,
                                     top: `${step.y}%`,
-                                    transform: 'translate(-50%, -50%)' // Ручное центрирование
+                                    transform: 'translate(-50%, -50%)'
                                 }}
                             >
                                 <div className="flex flex-col gap-4">
