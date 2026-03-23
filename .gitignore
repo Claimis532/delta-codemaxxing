@@ -3,6 +3,7 @@
 /.codex_deps
 /.tmp
 /reference_extract
+/.env.local
 
 # next
 /.next

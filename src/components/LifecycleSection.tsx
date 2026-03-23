@@ -65,9 +65,7 @@ export const LifecycleSection = () => {
                             whileInView="show"
                             viewport={{ once: true, amount: 0.3 }}
                             custom={0.1 + idx * 0.06}
-                            className={`rounded-2xl border p-4 ${
-                                step.id === 3 ? "border-purple-200 bg-purple-50/30" : "border-black/10 bg-white"
-                            }`}
+                            className={`rounded-2xl border p-4 `}
                         >
                             <div className="flex gap-3 items-center">
                                 <span className="h-8 w-8 shrink-0 rounded-full bg-delta-charcoal text-white flex items-center justify-center text-sm font-bold">
