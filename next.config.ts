@@ -1,18 +1,12 @@
 import type { NextConfig } from "next";
 
-const repository = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "";
-const isUserPageRepo = repository.endsWith(".github.io");
-const basePath = process.env.GITHUB_ACTIONS && repository && !isUserPageRepo ? `/${repository}` : "";
-
 const nextConfig: NextConfig = {
-  output: "export",
-  trailingSlash: true,
-  basePath,
-  assetPrefix: basePath || undefined,
+  // Убрали output: 'export', теперь это полноценное приложение
   images: {
-    unoptimized: true,
-    formats: ["image/avif", "image/webp"]
-  }
+    formats: ["image/avif", "image/webp"],
+    // Если будешь использовать картинки с внешних сайтов, их нужно добавить сюда:
+    // remotePatterns: [{ protocol: 'https', hostname: 'example.com' }],
+  },
 };
 
 export default nextConfig;
