@@ -1,12 +1,16 @@
 import { motion } from "framer-motion";
 import { rise } from "@/lib/animation";
 import { containerClass } from "@/constants/content";
+import { BrandOrbitCluster, BrandWavePattern } from "@/components/BrandDecor";
 
 export const AboutSection = () => (
-    <section id="about" className="scroll-mt-24 border-b border-black/10">
-        <div className={`${containerClass} py-20 md:py-24`}>
+    <section id="about" className="scroll-mt-28 relative overflow-hidden border-b border-black/10 md:overflow-visible">
+        <div className={`${containerClass} relative py-20 md:py-24`}>
+            <div className="delta-aurora absolute inset-0 opacity-90" />
+            <BrandWavePattern className="pointer-events-none absolute -left-28 top-0 hidden h-[260px] w-[340px] opacity-[0.34] md:block md:-left-36 md:top-[-8px] md:h-[340px] md:w-[420px]" />
+            <BrandOrbitCluster className="pointer-events-none absolute -right-16 bottom-[-44px] hidden h-[220px] w-[280px] opacity-[0.62] md:block md:-right-24 md:bottom-[-76px] md:h-[320px] md:w-[380px]" />
             <motion.div
-                className="grid gap-12 md:grid-cols-[1fr_1.35fr] md:gap-16"
+                className="relative grid gap-12 md:grid-cols-[1fr_1.35fr] md:gap-16"
                 variants={rise}
                 initial="hidden"
                 whileInView="show"

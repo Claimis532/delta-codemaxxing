@@ -31,6 +31,7 @@ body {
   font-family: var(--font-exo2), sans-serif;
   background: var(--delta-paper);
   color: var(--delta-ink);
+  overflow-x: hidden;
 }
 
 h1,
@@ -47,6 +48,20 @@ h4 {
 
 .bg-delta-cta {
   background: linear-gradient(135deg, var(--delta-charcoal) 0%, var(--delta-blue) 48%, var(--delta-violet) 100%);
+}
+
+.delta-aurora {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(36, 120, 196, 0.14), transparent 30%),
+    radial-gradient(circle at 85% 15%, rgba(141, 52, 188, 0.12), transparent 32%),
+    radial-gradient(circle at 60% 75%, rgba(36, 120, 196, 0.10), transparent 28%);
+}
+
+.delta-noise-grid {
+  background-image:
+    linear-gradient(rgba(38, 38, 116, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 38, 116, 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
 }
 
 .text-delta-ink {
@@ -97,4 +112,22 @@ h4 {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+@keyframes partner-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--partner-marquee-shift, -50%), 0, 0);
+  }
+}
+
+.partner-marquee {
+  animation: partner-marquee 75s linear infinite;
+  will-change: transform;
+}
+
+.partner-marquee:hover {
+  animation-play-state: paused;
 }

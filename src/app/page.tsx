@@ -36,16 +36,14 @@ export default function Home() {
 
             <ProjectsSection />
 
-            {/* Передаем функцию открытия в секцию призыва к действию */}
-            <CtaSection onOpenContact={openModal} />
-
             <LifecycleSection />
 
             <MaterialsSection ref={materialsTrackRef} onScroll={scrollMaterials} />
 
             <PartnersSection />
 
-            {/* Модалка рендерится один раз на всю страницу */}
+            <CtaSection onOpenContact={openModal} />
+
             <ContactModal isOpen={isModalOpen} closeModal={closeModal} />
         </main>
     );

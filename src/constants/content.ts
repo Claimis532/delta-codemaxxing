@@ -8,12 +8,12 @@ export const designDirections = [
 ];
 
 export const lifecycleSteps = [
-    { id: 1, title: "Сбор данных по объекту", icon: "collect", x: 26, y: 20 },
-    { id: 2, title: "Расчет стоимости и заключение договора", icon: "contract", x: 71, y: 38 },
-    { id: 3, title: "Проектирование", icon: "design", x: 28, y: 53 },
-    { id: 4, title: "Сопровождение экспертизы", icon: "expertise", x: 69, y: 65 },
-    { id: 5, title: "Выдача ПСД", icon: "docs", x: 28, y: 81 },
-    { id: 6, title: "Авторский надзор", icon: "supervise", x: 68, y: 88 }
+    { id: 1, title: "Сбор данных по объекту", icon: "collect" },
+    { id: 2, title: "Расчет стоимости и заключение договора", icon: "contract" },
+    { id: 3, title: "Проектирование", icon: "design" },
+    { id: 4, title: "Сопровождение экспертизы", icon: "expertise" },
+    { id: 5, title: "Выдача ПСД", icon: "docs" },
+    { id: 6, title: "Авторский надзор", icon: "supervise" }
 ] as const;
 
 export const materials = [
@@ -49,13 +49,12 @@ export const benefits = [
     { title: "Качество", icon: "award" }
 ] as const;
 
-export const containerClass = "mx-auto w-full max-w-[1120px] px-5 md:px-8";
+export const partnerBrands = [
+    { name: "ADB", image: "./assets/partners/ADB.png" },
+    { name: "Clay Paky", image: "./assets/partners/claypaky.png" },
+    { name: "DTS", image: "./assets/partners/DTS.png" },
+    { name: "NG", image: "./assets/partners/NG.png" },
+    { name: "Silver Star", image: "./assets/partners/SS.png" }
+] as const;
 
-export const processDots = [
-    { id: 1, x: 44, y: 22 },
-    { id: 2, x: 55, y: 34 },
-    { id: 3, x: 46, y: 53 },
-    { id: 4, x: 54, y: 68 },
-    { id: 5, x: 42, y: 81 },
-    { id: 6, x: 56, y: 88 }
-];
+export const containerClass = "mx-auto w-full max-w-[1120px] px-5 md:px-8";

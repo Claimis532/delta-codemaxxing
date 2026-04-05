@@ -1,69 +1,70 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import type { CSSProperties } from "react";
+import { motion } from "framer-motion";
+import { rise } from "@/lib/animation";
+import { BrandSpark } from "@/components/BrandDecor";
+import { containerClass, partnerBrands } from "@/constants/content";
 
-// Константы стилей (можно импортировать из @/constants/content, если они там)
-const containerClass = "mx-auto w-full max-w-[1120px] px-5 md:px-8";
+const MARQUEE_REPEATS = 4;
+const marqueeBrands = Array.from({ length: MARQUEE_REPEATS }, () => partnerBrands).flat();
 
-// Исправленная типизация для Framer Motion
-const easeCurve: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-const rise: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    show: (delay: number = 0) => ({
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.72,
-            delay: delay,
-            ease: easeCurve
-        }
-    })
-};
+function BrandTile({ name, image }: { name: string; image: string }) {
+    return (
+        <div className="mx-2 flex h-[84px] min-w-[156px] items-center justify-center rounded-[24px] border border-black/10 bg-white/90 px-5 shadow-[0_16px_36px_rgba(0,0,0,0.08)] md:mx-4 md:h-[108px] md:min-w-[220px] md:px-8">
+            <img src={image} alt={name} className="max-h-[40px] w-auto max-w-full object-contain md:max-h-[60px]" />
+        </div>
+    );
+}
 
 export function PartnersSection() {
     return (
-        <section id="partners" className="scroll-mt-24 border-b border-black/10 bg-delta-paper">
-            <div className={`${containerClass} py-20 md:py-24`}>
+        <section id="partners" className="scroll-mt-24 relative overflow-hidden border-b border-black/10 bg-delta-paper py-20 md:overflow-visible md:py-24">
+            <div className={`${containerClass} relative`}>
+                <BrandSpark className="pointer-events-none absolute -right-6 -top-12 hidden h-[120px] w-[120px] opacity-[0.26] md:block" />
+
                 <motion.h2
-                    className="text-center font-[var(--font-raleway)] text-4xl font-semibold tracking-[-0.01em] md:text-[58px]"
+                    className="text-center font-[var(--font-raleway)] text-[42px] font-semibold leading-[0.96] tracking-[-0.02em] md:text-[58px] md:leading-none"
                     variants={rise}
                     initial="hidden"
                     whileInView="show"
                     viewport={{ once: true, amount: 0.4 }}
                 >
-                    Наши партнеры по проектированию:
+                    Бренды, с которыми работаем
                 </motion.h2>
-
-                <motion.div
-                    variants={rise}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, amount: 0.3 }}
-                    custom={0.12}
-                    className="group mt-12 overflow-hidden rounded-[28px] border border-black/10 bg-white p-3 shadow-[0_16px_36px_rgba(0,0,0,0.08)] md:mt-16 md:p-5"
-                >
-                    <div className="relative overflow-hidden rounded-2xl">
-                        <img
-                            src="./assets/partners-wall.png"
-                            alt="Логотипы партнеров компании"
-                            className="h-auto w-full transition-transform duration-700 group-hover:scale-[1.01]"
-                        />
-                        {/* Декоративная рамка */}
-                        <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl" />
-                    </div>
-                </motion.div>
 
                 <motion.p
                     variants={rise}
                     initial="hidden"
                     whileInView="show"
-                    custom={0.2}
-                    className="mt-8 text-center text-sm font-medium text-black/40 md:text-base"
+                    custom={0.12}
+                    className="mx-auto mt-5 max-w-[340px] text-center text-sm font-medium leading-relaxed text-black/50 md:max-w-3xl md:text-lg"
                 >
-                    Сотрудничаем с лидерами индустрии и государственными заказчиками
+                    Подбираем решения под задачу и сотрудничаем с ведущими производителями сценического,
+                    звукового, медиа- и коммутационного оборудования.
                 </motion.p>
             </div>
+
+            <motion.div
+                variants={rise}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.2 }}
+                custom={0.18}
+                className="relative mt-12 overflow-hidden"
+            >
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-delta-paper to-transparent md:w-32" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-delta-paper to-transparent md:w-32" />
+
+                <div
+                    className="partner-marquee flex w-max items-center py-4"
+                    style={{ "--partner-marquee-shift": `-${100 / MARQUEE_REPEATS}%` } as CSSProperties}
+                >
+                    {marqueeBrands.map((brand, index) => (
+                        <BrandTile key={`${brand.name}-${index}`} name={brand.name} image={brand.image} />
+                    ))}
+                </div>
+            </motion.div>
         </section>
     );
 }

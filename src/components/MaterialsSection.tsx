@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import { motion } from "framer-motion";
 import { rise } from "@/lib/animation";
 import { materials, containerClass } from "@/constants/content";
+import { BrandOrbitCluster } from "@/components/BrandDecor";
 
 interface MaterialsProps {
     onScroll: (dir: "left" | "right") => void;
@@ -9,9 +10,11 @@ interface MaterialsProps {
 
 export const MaterialsSection = forwardRef<HTMLDivElement, MaterialsProps>(
     ({ onScroll }, ref) => (
-        <section id="materials" className="scroll-mt-24 border-b border-black/10 bg-[rgba(38,38,116,0.03)]">
-            <div className={`${containerClass} py-20 md:py-24`}>
-                <div className="flex items-center justify-between gap-4">
+        <section id="materials" className="scroll-mt-24 relative overflow-hidden border-b border-black/10 bg-[rgba(38,38,116,0.03)] md:overflow-visible">
+            <div className={`${containerClass} relative py-20 md:py-24`}>
+                <div className="delta-aurora absolute inset-0 opacity-70" />
+                <BrandOrbitCluster className="pointer-events-none absolute -right-14 -top-10 hidden h-[240px] w-[300px] opacity-[0.52] md:block md:-right-20 md:-top-16 md:h-[320px] md:w-[400px]" />
+                <div className="relative flex items-center justify-between gap-4">
                     <h2 className="font-[var(--font-raleway)] text-4xl font-semibold md:text-[58px]">
                         Референсы и портфолио
                     </h2>
@@ -21,7 +24,7 @@ export const MaterialsSection = forwardRef<HTMLDivElement, MaterialsProps>(
                     </div>
                 </div>
 
-                <div ref={ref} className="no-scrollbar mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">
+                <div ref={ref} className="no-scrollbar relative mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">
                     {materials.map((item, idx) => (
                         <motion.a
                             key={item.title}
