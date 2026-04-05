@@ -80,10 +80,10 @@ export const LifecycleSection = () => {
                     ))}
                 </div>
 
-                {/* --- ТВОЯ ДЕСКТОПНАЯ ВЕРСИЯ (БЕЗ ИЗМЕНЕНИЙ) --- */}
+                {/* --- АДАПТИВНАЯ ДЕСКТОПНАЯ ВЕРСИЯ --- */}
                 <div className="relative mt-12 hidden md:block">
                     <motion.div
-                        className="relative h-[1860px] w-full overflow-visible rounded-[30px] border border-black/10 bg-[#f7f7f7]"
+                        className="relative w-full overflow-visible rounded-[30px] border border-black/10 bg-[#f7f7f7] aspect-[4/5] md:aspect-[16/10] lg:aspect-[21/9] xl:aspect-[23/8]"
                         initial="hidden"
                         whileInView="show"
                         viewport={{ once: true, amount: 0.2 }}
@@ -126,18 +126,18 @@ export const LifecycleSection = () => {
                                 key={step.id}
                                 variants={roadmapStage}
                                 custom={idx}
-                                className="absolute z-20 w-[320px] rounded-3xl border border-black/10 bg-white p-6 shadow-xl"
+                                className="absolute z-20 w-[280px] sm:w-[300px] lg:w-[320px] rounded-3xl border border-black/10 bg-white p-5 lg:p-6 shadow-xl"
                                 style={{
                                     left: `${step.x}%`,
                                     top: `${step.y}%`,
                                     transform: 'translate(-50%, -50%)'
                                 }}
                             >
-                                <div className="flex flex-col gap-4">
-                                    <div className="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center">
+                                <div className="flex flex-col gap-3 lg:gap-4">
+                                    <div className="h-10 w-10 sm:h-11 sm:w-11 lg:h-12 lg:w-12 rounded-2xl bg-gray-100 flex items-center justify-center">
                                         <ProcessIcon kind={step.icon} />
                                     </div>
-                                    <p className="text-lg font-semibold leading-tight text-black">
+                                    <p className="text-base sm:text-lg font-semibold leading-tight text-black">
                                         {step.title}
                                     </p>
                                 </div>
