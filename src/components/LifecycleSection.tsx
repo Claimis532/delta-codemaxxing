@@ -80,26 +80,27 @@ export const LifecycleSection = () => {
                     ))}
                 </div>
 
-                {/* --- ТВОЯ ДЕСКТОПНАЯ ВЕРСИЯ (БЕЗ ИЗМЕНЕНИЙ) --- */}
+                {/* --- ДЕСКТОПНАЯ ВЕРСИЯ --- */}
                 <div className="relative mt-12 hidden md:block">
                     <motion.div
-                        className="relative h-[1860px] w-full overflow-visible rounded-[30px] border border-black/10 bg-[#f7f7f7]"
+                        className="relative w-full overflow-visible rounded-[30px] border border-black/10 bg-[#f7f7f7]"
+                        style={{ aspectRatio: '23/8' }}
                         initial="hidden"
                         whileInView="show"
                         viewport={{ once: true, amount: 0.2 }}
                     >
                         <svg
-                            viewBox="0 0 1100 760"
+                            viewBox="0 0 1100 380"
                             className="absolute inset-0 h-full w-full pointer-events-none"
                             preserveAspectRatio="none"
                         >
                             <motion.path
                                 variants={roadmapPath}
-                                d="M180 150 C 320 50, 430 230, 600 170 C 760 120, 820 260, 700 300 C 560 350, 490 380, 560 460 C 640 550, 680 620, 560 650 C 430 680, 360 670, 250 620"
+                                d="M180 120 C 320 40, 430 180, 600 130 C 760 90, 820 200, 700 230 C 560 270, 490 290, 560 340 C 640 390, 680 350, 560 360 C 430 370, 360 350, 250 310"
                                 fill="none"
                                 stroke="rgba(38,38,116,0.86)"
-                                strokeWidth="4"
-                                strokeDasharray="15 17"
+                                strokeWidth="3"
+                                strokeDasharray="12 14"
                             />
                         </svg>
 
@@ -115,7 +116,7 @@ export const LifecycleSection = () => {
                                     transform: 'translate(-50%, -50%)'
                                 }}
                             >
-                                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-delta-charcoal text-white font-bold">
+                                <span className="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center rounded-full bg-delta-charcoal text-white font-bold text-sm sm:text-base">
                                     {dot.id}
                                 </span>
                             </motion.div>
@@ -126,18 +127,18 @@ export const LifecycleSection = () => {
                                 key={step.id}
                                 variants={roadmapStage}
                                 custom={idx}
-                                className="absolute z-20 w-[320px] rounded-3xl border border-black/10 bg-white p-6 shadow-xl"
+                                className="absolute z-20 w-[260px] sm:w-[280px] lg:w-[300px] rounded-2xl border border-black/10 bg-white p-4 sm:p-5 shadow-lg"
                                 style={{
                                     left: `${step.x}%`,
                                     top: `${step.y}%`,
                                     transform: 'translate(-50%, -50%)'
                                 }}
                             >
-                                <div className="flex flex-col gap-4">
-                                    <div className="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center">
+                                <div className="flex flex-col gap-2 sm:gap-3">
+                                    <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-700">
                                         <ProcessIcon kind={step.icon} />
                                     </div>
-                                    <p className="text-lg font-semibold leading-tight text-black">
+                                    <p className="text-sm sm:text-base font-semibold leading-snug text-black">
                                         {step.title}
                                     </p>
                                 </div>
