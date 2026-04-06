@@ -1,50 +1,44 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { AboutSection } from "@/components/AboutSection";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { CtaSection } from "@/components/CtaSection";
 import { LifecycleSection } from "@/components/LifecycleSection";
-import { MaterialsSection } from "@/components/MaterialsSection";
 import { ContactModal } from "@/components/ContactModal";
 import { PartnersSection } from "@/components/PartnersSection";
+import { ProjectCategoryModal } from "@/components/ProjectCategoryModal";
+import { Footer } from "@/components/Footer";
+import { type ProjectCategory } from "@/constants/content";
 
 export default function Home() {
-    // Состояние модального окна
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const materialsTrackRef = useRef<HTMLDivElement | null>(null);
+    const [activeCategory, setActiveCategory] = useState<ProjectCategory | null>(null);
 
-    // Функции управления
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
-
-    const scrollMaterials = (direction: "left" | "right") => {
-        const offset = direction === "right" ? 430 : -430;
-        materialsTrackRef.current?.scrollBy({ left: offset, behavior: "smooth" });
-    };
-
-    const scrollToMaterials = () => {
-        document.getElementById("materials")?.scrollIntoView({ behavior: "smooth" });
-    };
+    const openCategoryModal = (category: ProjectCategory) => setActiveCategory(category);
+    const closeCategoryModal = () => setActiveCategory(null);
 
     return (
         <main className="bg-delta-paper text-delta-ink">
-            <Header onPortfolioClick={scrollToMaterials} />
+            <Header />
 
             <AboutSection />
 
-            <ProjectsSection />
+            <ProjectsSection onOpenCategory={openCategoryModal} />
 
             <LifecycleSection />
-
-            <MaterialsSection ref={materialsTrackRef} onScroll={scrollMaterials} />
 
             <PartnersSection />
 
             <CtaSection onOpenContact={openModal} />
 
+            <Footer />
+
             <ContactModal isOpen={isModalOpen} closeModal={closeModal} />
+            <ProjectCategoryModal isOpen={activeCategory !== null} category={activeCategory} closeModal={closeCategoryModal} />
         </main>
     );
 }

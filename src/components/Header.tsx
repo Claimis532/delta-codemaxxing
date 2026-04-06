@@ -1,32 +1,43 @@
-import { containerClass } from "@/constants/content";
+"use client";
 
-interface HeaderProps {
-    onPortfolioClick: () => void;
-}
+import { useEffect, useState } from "react";
 
-export const Header = ({ onPortfolioClick }: HeaderProps) => (
-    <>
-        <button
-            type="button"
-            onClick={onPortfolioClick}
-            className="fixed right-3 top-4 z-[80] flex items-center gap-2 rounded-full border border-[rgba(38,38,116,0.20)] bg-[linear-gradient(135deg,var(--delta-blue),var(--delta-violet))] px-3.5 py-2 text-[14px] font-semibold text-white shadow-[0_16px_32px_rgba(38,38,116,0.24)] transition hover:translate-y-[-1px] md:right-7 md:top-5 md:px-6 md:py-3.5 md:text-[18px]"
+export const Header = () => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsVisible(window.scrollY > 24);
+        };
+
+        handleScroll();
+        window.addEventListener("scroll", handleScroll, { passive: true });
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    return (
+        <header
+            className={`fixed inset-x-0 top-0 z-50 transition duration-300 ${
+                isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
+            }`}
         >
-            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-white/80" />
-            <span>Портфолио</span>
-        </button>
+            <div className="mx-auto mt-4 w-full max-w-[860px] px-4 md:px-6">
+                <div className="rounded-full border border-white/14 bg-[rgba(14,19,40,0.72)] shadow-[0_18px_44px_rgba(8,12,28,0.28)] backdrop-blur-xl">
+                    <div className="flex h-[62px] items-center justify-center gap-8 px-6 md:h-[74px] md:gap-12 md:px-10">
+                        <a href="#about" className="flex shrink-0 items-center">
+                            <img src="./assets/logo-horizontal.png" alt="Логотип" className="h-[34px] w-auto object-contain brightness-0 invert md:h-[46px]" />
+                        </a>
 
-        <header className="sticky top-0 z-50 border-b border-black/10 bg-[rgba(243,243,245,0.94)] backdrop-blur-md">
-            <div className={`${containerClass} flex h-[82px] items-center justify-between pr-24 md:h-[108px] md:pr-44`}>
-                <a href="#about" className="flex items-center">
-                    <img src="./assets/logo-horizontal.png" alt="Логотип" className="h-[48px] w-auto object-contain md:h-[76px]" />
-                </a>
-                <nav className="hidden items-center gap-8 text-[17px] font-medium text-black/70 md:flex lg:gap-10 lg:text-[19px]">
-                    <a href="#about" className="transition hover:text-black">О компании</a>
-                    <a href="#projects" className="transition hover:text-black">Мы проектируем</a>
-                    <a href="#materials" className="transition hover:text-black">Материалы</a>
-                    <a href="#partners" className="transition hover:text-black">Партнеры</a>
-                </nav>
+                        <nav className="hidden items-center justify-center gap-6 text-[15px] font-medium text-white/74 md:flex lg:gap-8 lg:text-[17px]">
+                            <a href="#about" className="transition hover:text-white">О компании</a>
+                            <a href="#projects" className="transition hover:text-white">Мы проектируем</a>
+                            <a href="#partners" className="transition hover:text-white">Партнеры</a>
+                            <a href="#footer" className="transition hover:text-white">Контакты</a>
+                        </nav>
+                    </div>
+                </div>
             </div>
         </header>
-    </>
-);
+    );
+};

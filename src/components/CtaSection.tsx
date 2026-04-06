@@ -10,8 +10,8 @@ interface CtaSectionProps {
 }
 
 export const CtaSection = ({ onOpenContact }: CtaSectionProps) => (
-    <section className="relative overflow-hidden border-b border-black/10 bg-delta-cta md:overflow-visible">
-        <div className={`${containerClass} relative py-24`}>
+    <section className="relative overflow-hidden bg-delta-cta md:overflow-visible">
+        <div className={`${containerClass} relative pb-4 pt-24 md:pb-3 md:pt-24`}>
             <BrandWavePattern className="pointer-events-none absolute -left-28 top-[-20px] hidden h-[320px] w-[360px] opacity-[0.28] md:block" />
             <BrandOrbitCluster className="pointer-events-none absolute -right-14 bottom-[-32px] hidden h-[260px] w-[320px] opacity-[0.32] md:block" />
             <BrandSpark className="pointer-events-none absolute right-[22%] top-6 hidden h-[132px] w-[132px] opacity-[0.34] md:block" />
