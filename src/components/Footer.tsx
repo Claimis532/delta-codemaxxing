@@ -1,17 +1,25 @@
 import { containerClass } from "@/constants/content";
+import { siteConfig } from "@/config/site";
 
 const footerGroups = [
     {
         title: "Контакты",
-        items: ["Телефон", "Email"]
+        items: [
+            <a key="phone" href={`tel:${siteConfig.companyPhoneHref}`} className="transition hover:text-white">
+                {siteConfig.companyPhone}
+            </a>,
+            <a key="email" href={`mailto:${siteConfig.companyEmail}`} className="transition hover:text-white">
+                {siteConfig.companyEmail}
+            </a>
+        ]
     },
     {
         title: "Адрес",
-        items: ["Город, улица", "Офис / этаж"]
+        items: [siteConfig.addressLine1, siteConfig.addressLine2]
     },
     {
         title: "Реквизиты",
-        items: ["ООО «Название компании»", "ИНН / ОГРН"]
+        items: [siteConfig.companyLegalName, siteConfig.legalDetails]
     }
 ] as const;
 
@@ -22,7 +30,7 @@ export const Footer = () => (
                 <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/42">Контакты</p>
                     <p className="mt-3 max-w-[260px] text-sm leading-relaxed text-white/62">
-                        Короткий шаблонный подвал для сайта-визитки с базовой контактной и юридической информацией.
+                        блаблабла
                     </p>
                 </div>
 
@@ -31,8 +39,8 @@ export const Footer = () => (
                         <section key={group.title}>
                             <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">{group.title}</h3>
                             <div className="mt-3 space-y-2 text-sm text-white/74">
-                                {group.items.map((item) => (
-                                    <p key={item}>{item}</p>
+                                {group.items.map((item, index) => (
+                                    <p key={`${group.title}-${index}`}>{item}</p>
                                 ))}
                             </div>
                         </section>
@@ -40,14 +48,16 @@ export const Footer = () => (
                 </div>
 
                 <div className="text-sm text-white/58 md:text-right">
-                    <p>Пн-Пт: 09:00-18:00</p>
-                    <p className="mt-2">Политика конфиденциальности</p>
+                    <p>{siteConfig.workHours}</p>
+                    <a href={siteConfig.privacyPolicyUrl} className="mt-2 inline-block transition hover:text-white">
+                        Политика конфиденциальности
+                    </a>
                 </div>
             </div>
 
             <div className="mt-5 flex flex-col gap-2 border-t border-white/8 pt-4 text-xs text-white/34 md:flex-row md:items-center md:justify-between">
-                <p>© 20__ Название компании</p>
-                <p>Все права защищены</p>
+                <p>{`© ${new Date().getFullYear()} ${siteConfig.companyName}`}</p>
+                <p>{siteConfig.copyrightLabel}</p>
             </div>
         </div>
     </footer>

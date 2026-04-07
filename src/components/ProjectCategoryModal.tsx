@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { type ProjectCategory } from "@/constants/content";
 
 interface ProjectCategoryModalProps {
@@ -13,10 +13,6 @@ interface ProjectCategoryModalProps {
 
 export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCategoryModalProps) {
     const [activeIndex, setActiveIndex] = useState(0);
-
-    useEffect(() => {
-        setActiveIndex(0);
-    }, [category?.id, isOpen]);
 
     if (!category) {
         return null;
@@ -41,7 +37,7 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                    <div className="fixed inset-0 bg-black/60" />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">

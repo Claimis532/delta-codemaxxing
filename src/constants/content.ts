@@ -8,7 +8,6 @@ export interface ProjectCategory {
     title: string;
     description: string;
     badge: string;
-    cta: string;
     coverImage: string;
     objectNames: string[];
     gallery: ProjectGalleryItem[];
@@ -20,7 +19,6 @@ export const projectCategories: ProjectCategory[] = [
         title: "Театры и дворцы культуры",
         description: "Проектирование сценических, световых, звуковых и мультимедийных систем для учреждений культуры.",
         badge: "Культура",
-        cta: "Подробнее",
         coverImage: "/assets/photoOBJ/culture/дворец культуры ирбит.jpg",
         objectNames: [
             "Ачитский районный дом культуры, г. Ачит",
@@ -69,7 +67,6 @@ export const projectCategories: ProjectCategory[] = [
         title: "Школы",
         description: "Технологические решения для актовых залов, образовательных пространств и систем оповещения.",
         badge: "Образование",
-        cta: "Подробнее",
         coverImage: "/assets/photoOBJ/schools/glavnaya.jpg",
         objectNames: [
             "«Губернаторский лицей» г. Екатеринбург",
@@ -140,7 +137,6 @@ export const projectCategories: ProjectCategory[] = [
         title: "Спортивные объекты",
         description: "Оснащение арен и комплексов с учетом регламентов соревнований и эксплуатационных сценариев.",
         badge: "Спорт",
-        cta: "Подробнее",
         coverImage: "/assets/photoOBJ/sport/Дворец дзюдо.jpg",
         objectNames: [
             "Дворец дзюдо"
@@ -161,12 +157,6 @@ export const lifecycleSteps = [
     { id: 4, title: "Сопровождение экспертизы", icon: "expertise" },
     { id: 5, title: "Выдача ПСД", icon: "docs" },
     { id: 6, title: "Авторский надзор", icon: "supervise" }
-] as const;
-
-export const benefits = [
-    { title: "Опыт по всей России", icon: "map" },
-    { title: "Сильная команда", icon: "like" },
-    { title: "Качество", icon: "award" }
 ] as const;
 
 export const partnerBrands = [

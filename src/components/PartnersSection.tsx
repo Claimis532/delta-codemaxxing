@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import { motion } from "framer-motion";
 import { rise } from "@/lib/animation";
@@ -12,9 +13,11 @@ const marqueeBrands = Array.from({ length: MARQUEE_REPEATS }, () => partnerBrand
 function BrandTile({ name, image }: { name: string; image: string }) {
     return (
         <div className="mx-2 flex h-[84px] min-w-[156px] items-center justify-center rounded-[24px] border border-black/[0.06] bg-white px-5 shadow-[0_16px_34px_rgba(17,24,39,0.08)] md:mx-4 md:h-[108px] md:min-w-[220px] md:px-8">
-            <img
+            <Image
                 src={image}
                 alt={name}
+                width={180}
+                height={60}
                 className="max-h-[40px] w-auto max-w-full object-contain mix-blend-multiply md:max-h-[60px]"
             />
         </div>
@@ -44,7 +47,7 @@ export function PartnersSection() {
                     custom={0.12}
                     className="mx-auto mt-5 max-w-[340px] text-center text-sm font-medium leading-relaxed text-black/50 md:max-w-3xl md:text-lg"
                 >
-                    Подбираем решения под задачу и сотрудничаем с ведущими производителями сценического, звукового, медиа- и коммутационного оборудования.
+                    Подбираем решения под задачу и сотрудничаем с ведущими производителями сценического, звукового, медиа- и коммуникационного оборудования.
                 </motion.p>
             </div>
 

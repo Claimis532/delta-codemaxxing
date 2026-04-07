@@ -2,39 +2,44 @@
 
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { motion, Variants } from "framer-motion";
-import { sendProjectRequest } from "@/app/actions"; // Убедись, что путь верный
+import { sendProjectRequest } from "@/app/actions";
 
 interface ContactModalProps {
     isOpen: boolean;
     closeModal: () => void;
 }
 
-const easeCurve: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
 export function ContactModal({ isOpen, closeModal }: ContactModalProps) {
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [startedAt] = useState(() => Date.now());
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setStatus("loading");
+        setErrorMessage("");
 
         const formData = new FormData(event.currentTarget);
 
         try {
             const result = await sendProjectRequest(formData);
+
             if (result.success) {
                 setStatus("success");
-                // Закрываем через 2 секунды после успеха
+                event.currentTarget.reset();
+
                 setTimeout(() => {
                     closeModal();
                     setStatus("idle");
+                    setErrorMessage("");
                 }, 2000);
             } else {
                 setStatus("error");
+                setErrorMessage(result.error || "Не удалось отправить заявку. Попробуйте еще раз.");
             }
-        } catch (error) {
+        } catch {
             setStatus("error");
+            setErrorMessage("Не удалось отправить заявку. Попробуйте еще раз.");
         }
     };
 
@@ -50,7 +55,7 @@ export function ContactModal({ isOpen, closeModal }: ContactModalProps) {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+                    <div className="fixed inset-0 bg-black/55" />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -64,68 +69,80 @@ export function ContactModal({ isOpen, closeModal }: ContactModalProps) {
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[32px] bg-delta-paper p-8 shadow-2xl border border-black/5">
-                                <div className="flex justify-between items-center mb-6">
-                                    <Dialog.Title className="text-2xl font-semibold font-[var(--font-raleway)] text-delta-ink">
+                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[32px] border border-black/5 bg-delta-paper p-8 shadow-2xl">
+                                <div className="mb-6 flex items-center justify-between">
+                                    <Dialog.Title className="font-[var(--font-raleway)] text-2xl font-semibold text-delta-ink">
                                         Обсудить проект
                                     </Dialog.Title>
                                     <button
+                                        type="button"
                                         onClick={closeModal}
-                                        className="h-10 w-10 flex items-center justify-center rounded-full bg-black/[0.03] text-black/40 hover:text-black transition"
+                                        className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.03] text-black/40 transition hover:text-black"
                                     >
-                                        ✕
+                                        ×
                                     </button>
                                 </div>
 
                                 {status === "success" ? (
-                                    <div className="py-12 text-center animate-in fade-in zoom-in duration-300">
-                                        <div className="text-5xl mb-4">🚀</div>
-                                        <h3 className="text-xl font-bold text-delta-blue">Заявка отправлена!</h3>
-                                        <p className="text-black/40 mt-2">Мы скоро свяжемся с вами.</p>
+                                    <div className="animate-in fade-in zoom-in py-12 text-center duration-300">
+                                        <div className="mb-4 text-5xl">Спасибо!</div>
+                                        <h3 className="text-xl font-bold text-delta-blue">Заявка отправлена</h3>
+                                        <p className="mt-2 text-black/40">Мы скоро свяжемся с вами.</p>
                                     </div>
                                 ) : (
                                     <form className="space-y-4" onSubmit={handleSubmit}>
+                                        <input type="hidden" name="startedAt" value={startedAt} />
+                                        <div className="hidden" aria-hidden="true">
+                                            <label htmlFor="company">Company</label>
+                                            <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+                                        </div>
+
                                         <div className="space-y-1">
                                             <input
-                                                name="name" // Добавлено
+                                                name="name"
                                                 required
                                                 type="text"
+                                                maxLength={120}
+                                                autoComplete="name"
                                                 placeholder="Ваше имя"
-                                                className="w-full rounded-2xl border border-black/10 bg-white p-4 outline-none focus:ring-2 focus:ring-delta-blue transition-all"
+                                                className="w-full rounded-2xl border border-black/10 bg-white p-4 outline-none transition-all focus:ring-2 focus:ring-delta-blue"
                                             />
                                         </div>
+
                                         <div className="space-y-1">
                                             <input
-                                                name="contact" // Добавлено
+                                                name="contact"
                                                 required
                                                 type="text"
+                                                maxLength={160}
+                                                autoComplete="email"
                                                 placeholder="Телефон или Email"
-                                                className="w-full rounded-2xl border border-black/10 bg-white p-4 outline-none focus:ring-2 focus:ring-delta-blue transition-all"
+                                                className="w-full rounded-2xl border border-black/10 bg-white p-4 outline-none transition-all focus:ring-2 focus:ring-delta-blue"
                                             />
                                         </div>
+
                                         <div className="space-y-1">
                                             <textarea
-                                                name="message" // Добавлено
+                                                name="message"
                                                 required
-                                                placeholder="Расскажите немного о проекте"
                                                 rows={4}
-                                                className="w-full rounded-2xl border border-black/10 bg-white p-4 outline-none focus:ring-2 focus:ring-delta-blue transition-all resize-none"
+                                                maxLength={4000}
+                                                placeholder="Расскажите немного о проекте"
+                                                className="w-full resize-none rounded-2xl border border-black/10 bg-white p-4 outline-none transition-all focus:ring-2 focus:ring-delta-blue"
                                             />
                                         </div>
 
-                                        {status === "error" && (
-                                            <p className="text-red-500 text-sm text-center">Произошла ошибка. Попробуйте снова.</p>
-                                        )}
+                                        {status === "error" && <p className="text-center text-sm text-red-500">{errorMessage}</p>}
 
                                         <button
-                                            type="submit" // Убедись, что тип submit
+                                            type="submit"
                                             disabled={status === "loading"}
-                                            className="w-full bg-delta-blue text-white py-4 rounded-2xl font-bold hover:bg-delta-violet transition-all shadow-lg shadow-delta-blue/20 active:scale-[0.98] disabled:opacity-50"
+                                            className="w-full rounded-2xl bg-delta-blue py-4 font-bold text-white shadow-lg shadow-delta-blue/20 transition-all hover:bg-delta-violet active:scale-[0.98] disabled:opacity-50"
                                         >
                                             {status === "loading" ? "Отправка..." : "Отправить запрос"}
                                         </button>
 
-                                        <p className="text-[10px] text-center text-black/40 px-4">
+                                        <p className="px-4 text-center text-[10px] text-black/40">
                                             Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
                                         </p>
                                     </form>

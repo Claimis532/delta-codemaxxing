@@ -34,6 +34,10 @@ body {
   overflow-x: hidden;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 h1,
 h2,
 h3,
@@ -132,4 +136,22 @@ h4 {
   animation-play-state: paused;
 }
 
-.navbar{ color: white}
+body.modal-open .partner-marquee {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto;
+  }
+
+  .partner-marquee {
+    animation: none;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.navbar {
+  color: white;
+}
