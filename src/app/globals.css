@@ -131,3 +131,5 @@ h4 {
 .partner-marquee:hover {
   animation-play-state: paused;
 }
+
+.navbar{ color: white}

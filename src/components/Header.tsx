@@ -30,10 +30,10 @@ export const Header = () => {
                         </a>
 
                         <nav className="hidden items-center justify-center gap-6 text-[15px] font-medium text-white/74 md:flex lg:gap-8 lg:text-[17px]">
-                            <a href="#about" className="transition hover:text-white">О компании</a>
-                            <a href="#projects" className="transition hover:text-white">Мы проектируем</a>
-                            <a href="#partners" className="transition hover:text-white">Партнеры</a>
-                            <a href="#footer" className="transition hover:text-white">Контакты</a>
+                            <a href="#about" className="transition hover:text-white navbar">О компании</a>
+                            <a href="#projects" className="transition hover:text-white navbar">Мы проектируем</a>
+                            <a href="#partners" className="transition hover:text-white navbar">Партнеры</a>
+                            <a href="#footer" className="transition hover:text-white navbar">Контакты</a>
                         </nav>
                     </div>
                 </div>
