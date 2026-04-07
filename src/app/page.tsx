@@ -33,9 +33,10 @@ export default function Home() {
 
             <PartnersSection />
 
-            <CtaSection onOpenContact={openModal} />
-
-            <Footer />
+            <section className="relative overflow-hidden bg-delta-cta">
+                <CtaSection onOpenContact={openModal} />
+                <Footer />
+            </section>
 
             <ContactModal isOpen={isModalOpen} closeModal={closeModal} />
             <ProjectCategoryModal isOpen={activeCategory !== null} category={activeCategory} closeModal={closeCategoryModal} />

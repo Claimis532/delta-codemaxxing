@@ -16,8 +16,8 @@ const footerGroups = [
 ] as const;
 
 export const Footer = () => (
-    <footer id="footer" className="bg-delta-cta text-white">
-        <div className={`${containerClass} border-t border-white/10 py-6 md:py-8`}>
+    <footer id="footer" className="text-white">
+        <div className={`${containerClass} border-t border-white/10 py-8 md:py-10`}>
             <div className="grid gap-5 md:grid-cols-[1.1fr_2fr_auto] md:items-start md:gap-6">
                 <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/42">Контакты</p>

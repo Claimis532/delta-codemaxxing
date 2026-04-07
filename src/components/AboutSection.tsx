@@ -5,19 +5,19 @@ import { containerClass } from "@/constants/content";
 
 const collagePhotos = [
     {
-        src: "/assets/photoOBJ/withPepople/центр культуры и искусства.jpg",
+        src: "/assets/photoOBJ/withPepople/челяб госу академ.jpg",
         alt: "Выступление в культурном центре"
     },
     {
-        src: "/assets/photoOBJ/withPepople/дворец культуры ирбит.jpg",
+        src: "/assets/photoOBJ/withPepople/центр культуры и искусства.jpg",
         alt: "Выступление во дворце культуры"
     },
     {
-        src: "/assets/photoOBJ/withPepople/гор дворец детского и юнош творч.jpg",
+        src: "/assets/photoOBJ/withPepople/центр худож и эстет.jpg",
         alt: "Выступление на сцене детского дворца творчества"
     },
     {
-        src: "/assets/photoOBJ/withPepople/центр худож и эстет.jpg",
+        src: "/assets/photoOBJ/withPepople/гор дворец детского и юнош творч.jpg",
         alt: "Сцена с артистами и зрительным залом"
     }
 ] as const;
@@ -42,7 +42,7 @@ export const AboutSection = () => (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.08),rgba(0,0,0,0.46)_62%,rgba(0,0,0,0.7)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,8,14,0.28)_0%,rgba(6,8,14,0.12)_24%,rgba(6,8,14,0.16)_62%,rgba(6,8,14,0.34)_100%)]" />
 
-        <div className={`${containerClass} relative flex min-h-[105svh] items-center justify-center py-20 md:min-h-[112svh] md:py-24`}>
+        <div className={`${containerClass} relative flex min-h-[105svh] items-center justify-center py-20 md:min-h-[100svh] md:py-24`}>
             <motion.div
                 className="mx-auto max-w-[840px] text-center text-white"
                 variants={rise}

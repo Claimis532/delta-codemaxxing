@@ -24,6 +24,7 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
 
     const activePhoto = category.gallery[activeIndex];
     const hasMultiplePhotos = category.gallery.length > 1;
+    const showPhotoCaption = category.id !== "schools";
 
     const goPrev = () => setActiveIndex((current) => (current === 0 ? category.gallery.length - 1 : current - 1));
     const goNext = () => setActiveIndex((current) => (current === category.gallery.length - 1 ? 0 : current + 1));
@@ -79,7 +80,7 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
                                             <div className="relative aspect-[4/3]">
                                                 <Image
                                                     src={activePhoto.src}
-                                                    alt={activePhoto.objectName}
+                                                    alt={showPhotoCaption ? activePhoto.objectName : category.title}
                                                     fill
                                                     sizes="(max-width: 768px) 100vw, 65vw"
                                                     className="object-cover"
@@ -106,15 +107,15 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
                                             )}
                                         </div>
 
-                                        <div className="mt-6 grid gap-6 md:grid-cols-[minmax(0,1fr)_320px]">
-                                            <div>
+                                        <div className={`mt-6 grid gap-6 ${showPhotoCaption ? "md:grid-cols-[minmax(0,1fr)_320px]" : ""}`}>
+                                            {showPhotoCaption ? <div>
                                                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-black/40">
                                                     Объект
                                                 </p>
                                                 <p className="mt-2 max-w-[820px] text-[24px] font-semibold leading-tight text-delta-ink md:text-[36px]">
                                                     {activePhoto.objectName}
                                                 </p>
-                                            </div>
+                                            </div> : null}
 
                                             <div>
                                                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-black/40">
