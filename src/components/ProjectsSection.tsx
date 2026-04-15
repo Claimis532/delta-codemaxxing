@@ -18,16 +18,14 @@ export const ProjectsSection = () => {
             <div className={`${containerClass} relative py-20 md:py-24`}>
                 <div className="delta-aurora absolute inset-0 opacity-70" />
                 <BrandOrbitCluster className="pointer-events-none absolute -right-14 -top-10 hidden h-[240px] w-[300px] opacity-[0.42] md:block md:-right-24 md:-top-16 md:h-[320px] md:w-[400px]" />
-
-                <div className="relative max-w-[760px]">
+                <div className="relative max-w-full">
                     <h2 className="font-[var(--font-raleway)] text-4xl font-semibold md:text-[58px]">
                         Мы проектируем
                     </h2>
-                    <p className="mt-4 max-w-[620px] text-base text-black/62 md:text-[22px]">
+                    <p className="mt-4 text-base text-black/62 md:text-[22px]">
                         Театры, учебные пространства и спортивные объекты. Откройте карточку, чтобы посмотреть фото реализованных площадок и список объектов по направлению.
                     </p>
                 </div>
-
                 <div className="relative mt-10 md:mt-12">
                     <div className="no-scrollbar -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 md:mx-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0 md:pb-0">
                         {projectCategories.map((item, idx) => (

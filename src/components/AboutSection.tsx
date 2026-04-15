@@ -53,10 +53,17 @@ export const AboutSection = () => (
                 viewport={{ once: true, amount: 0.25 }}
                 custom={0.08}
             >
-                <p className="text-[14px] font-medium uppercase tracking-[0.28em] text-white/72 md:text-[18px]">
+                <Image
+                    src="/assets/logo-horizontal.png"
+                    alt="Логотип"
+                    width={300}
+                    height={105}
+                    className="mx-auto block h-[90px] w-auto max-w-[260px] object-contain brightness-0 invert md:h-[105px] md:max-w-none"
+                />
+                <p className="mt-4 text-[14px] font-medium uppercase tracking-[0.28em] text-white/72 md:text-[18px]">
                     ЦП Дельта
                 </p>
-                <h2 className="mx-auto mt-5 max-w-[860px] font-[var(--font-raleway)] text-[42px] font-semibold leading-[0.96] tracking-[-0.03em] md:text-[82px]">
+                <h2 className="mx-auto mt-8 max-w-[860px] font-[var(--font-raleway)] text-[42px] font-semibold leading-[0.96] tracking-[-0.03em] md:mt-12 md:text-[82px]">
                     Проектируем
                     <span className="block">пространства, которые оживают</span>
                 </h2>

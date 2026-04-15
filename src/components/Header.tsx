@@ -11,16 +11,6 @@ export const Header = () => {
             <div className="mx-auto mt-4 w-full max-w-[860px] px-4 md:px-6">
                 <div className="rounded-full border border-white/14 bg-[rgba(14,19,40,0.72)] shadow-[0_18px_44px_rgba(8,12,28,0.28)] backdrop-blur-xl">
                     <div className="flex h-[62px] items-center justify-between gap-3 px-4 md:h-[74px] md:justify-center md:gap-12 md:px-10">
-                        <a href="#about" className="flex min-w-0 shrink items-center">
-                            <Image
-                                src="/assets/logo-horizontal.png"
-                                alt="Логотип"
-                                width={132}
-                                height={46}
-                                className="h-[45px] w-auto max-w-[132px] object-contain brightness-0 invert md:h-[46px] md:max-w-none"
-                            />
-                        </a>
-
                         <button
                             type="button"
                             onClick={openContactModal}
