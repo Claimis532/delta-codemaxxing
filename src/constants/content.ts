@@ -11,6 +11,7 @@ export interface ProjectCategory {
     coverImage: string;
     objectNames: string[];
     gallery: ProjectGalleryItem[];
+    isPlaceholder?: boolean;
 }
 
 export const projectCategories: ProjectCategory[] = [
@@ -147,6 +148,37 @@ export const projectCategories: ProjectCategory[] = [
                 objectName: "Дворец дзюдо"
             }
         ]
+    }
+    ,
+    {
+        id: "culture",
+        title: "Музеи и выставочные пространства",
+        description: "Скоро добавим подборку проектов и решений по этому направлению.",
+        badge: "Скоро",
+        coverImage: "/assets/photoOBJ/culture/СЃРёРЅР°СЂР° С†РµРЅС‚СЂ.jpg",
+        objectNames: [],
+        gallery: [],
+        isPlaceholder: true
+    },
+    {
+        id: "schools",
+        title: "Конференц-залы и аудитории",
+        description: "Этот блок пока пустой. Здесь появятся кейсы для деловых и учебных пространств.",
+        badge: "Скоро",
+        coverImage: "/assets/photoOBJ/schools/glavnaya.jpg",
+        objectNames: [],
+        gallery: [],
+        isPlaceholder: true
+    },
+    {
+        id: "sports",
+        title: "Многофункциональные площадки",
+        description: "Готовим отдельную подборку решений для гибких общественных и событийных площадок.",
+        badge: "Скоро",
+        coverImage: "/assets/photoOBJ/sport/Р”РІРѕСЂРµС† РґР·СЋРґРѕ.jpg",
+        objectNames: [],
+        gallery: [],
+        isPlaceholder: true
     }
 ] as const;
 

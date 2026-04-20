@@ -5,10 +5,11 @@ import { useState } from "react";
 import { useModalActions } from "@/components/ModalProvider";
 
 const navigationItems = [
-    { href: "#about", label: "О компании" },
-    { href: "#projects", label: "Мы проектируем" },
-    { href: "#partners", label: "Партнеры" },
-    { href: "#footer", label: "Контакты" }
+    { href: "#about", label: "О компании", type: "link" },
+    { href: "#projects", label: "Мы проектируем", type: "link" },
+    { href: "#advantages", label: "Преимущества", type: "link" },
+    { href: "#footer", label: "Контакты", type: "link" },
+    { href: "#contact", label: "Обсудить проект", type: "action" }
 ] as const;
 
 export const Header = () => {
@@ -50,33 +51,28 @@ export const Header = () => {
 
                     <nav className="hidden items-center justify-center gap-2 text-[15px] font-semibold text-white md:flex lg:text-[17px]">
                         {navigationItems.map((item) => (
-                            <a
-                                key={item.href}
-                                href={item.href}
-                                className="header-link navbar px-4 py-2 text-white"
-                            >
-                                {item.label}
-                            </a>
+                            item.type === "action" ? (
+                                <button
+                                    key={item.label}
+                                    type="button"
+                                    onClick={handleOpenContactModal}
+                                    className="header-link navbar px-4 py-2 text-white"
+                                >
+                                    {item.label}
+                                </button>
+                            ) : (
+                                <a
+                                    key={item.href}
+                                    href={item.href}
+                                    className="header-link navbar px-4 py-2 text-white"
+                                >
+                                    {item.label}
+                                </a>
+                            )
                         ))}
                     </nav>
 
-                    <button
-                        type="button"
-                        onClick={handleOpenContactModal}
-                        className="header-link hidden px-4 py-2 text-[15px] font-semibold text-white lg:text-[17px] md:inline-flex"
-                    >
-                        Обсудить проект
-                    </button>
-
                     <div className="flex items-center gap-3 md:hidden">
-                        <button
-                            type="button"
-                            onClick={handleOpenContactModal}
-                            className="header-link px-3 py-2 text-[13px] font-semibold text-white"
-                        >
-                            Обсудить проект
-                        </button>
-
                         <button
                             type="button"
                             onClick={handleToggleMenu}
@@ -96,19 +92,30 @@ export const Header = () => {
 
                 <div
                     id="mobile-navigation"
-                    className={`overflow-hidden transition-all duration-300 md:hidden ${isMenuOpen ? "max-h-[320px] pb-4 opacity-100" : "max-h-0 opacity-0"}`}
+                    className={`overflow-hidden transition-all duration-300 md:hidden ${isMenuOpen ? "max-h-[360px] pb-4 opacity-100" : "max-h-0 opacity-0"}`}
                 >
                     <div className="px-0 pt-1">
                         <nav className="flex flex-col gap-1">
                             {navigationItems.map((item) => (
-                                <a
-                                    key={item.href}
-                                    href={item.href}
-                                    onClick={handleCloseMenu}
-                                    className="header-link px-4 py-3 text-[15px] font-medium text-white"
-                                >
-                                    {item.label}
-                                </a>
+                                item.type === "action" ? (
+                                    <button
+                                        key={item.label}
+                                        type="button"
+                                        onClick={handleOpenContactModal}
+                                        className="header-link px-4 py-3 text-left text-[15px] font-medium text-white"
+                                    >
+                                        {item.label}
+                                    </button>
+                                ) : (
+                                    <a
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={handleCloseMenu}
+                                        className="header-link px-4 py-3 text-[15px] font-medium text-white"
+                                    >
+                                        {item.label}
+                                    </a>
+                                )
                             ))}
                         </nav>
                     </div>

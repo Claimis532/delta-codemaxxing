@@ -4,6 +4,7 @@ import { ProjectsSection } from "@/components/ProjectsSection";
 import { CtaSection } from "@/components/CtaSection";
 import { LifecycleSection } from "@/components/LifecycleSection";
 import { PartnersSection } from "@/components/PartnersSection";
+import { AdvantagesSection } from "@/components/AdvantagesSection";
 import { Footer } from "@/components/Footer";
 import { ModalProvider } from "@/components/ModalProvider";
 
@@ -18,6 +19,8 @@ export default function Home() {
                 <ProjectsSection />
 
                 <LifecycleSection />
+
+                <AdvantagesSection />
 
                 <PartnersSection />
 
