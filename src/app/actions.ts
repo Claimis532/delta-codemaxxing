@@ -2,6 +2,7 @@
 
 import nodemailer from "nodemailer";
 import { headers } from "next/headers";
+import { getMailSettings } from "@/lib/mail-settings";
 
 const NAME_MAX_LENGTH = 120;
 const CONTACT_MAX_LENGTH = 160;
@@ -37,16 +38,6 @@ function escapeHtml(value: string) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-}
-
-function getRequiredEnv(name: string) {
-    const value = process.env[name]?.trim();
-
-    if (!value) {
-        throw new Error(`Missing required environment variable: ${name}`);
-    }
-
-    return value;
 }
 
 function getClientIp(forwardedFor: string | null) {
@@ -118,25 +109,24 @@ function validateFormData(formData: FormData) {
     return { name, contact, message };
 }
 
-function getTransporter() {
-    const host = getRequiredEnv("SMTP_HOST");
-    const port = Number(getRequiredEnv("SMTP_PORT"));
-    const user = getRequiredEnv("SMTP_USER");
-    const pass = getRequiredEnv("SMTP_PASS");
+async function getMailerConfig() {
+    const settings = await getMailSettings();
 
-    if (!Number.isFinite(port)) {
-        throw new Error("Invalid SMTP_PORT value");
+    if (!settings.host || !settings.user || !settings.pass || !settings.mailFrom || !settings.mailTo) {
+        throw new Error("MAIL_CONFIG_MISSING");
     }
 
-    return nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465,
-        auth: {
-            user,
-            pass
-        }
-    });
+    if (!Number.isFinite(settings.port)) {
+        throw new Error("MAIL_CONFIG_INVALID");
+    }
+
+    return {
+        ...settings,
+        recipients: settings.mailTo
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean)
+    };
 }
 
 function getErrorMessage(error: unknown) {
@@ -161,6 +151,9 @@ function getErrorMessage(error: unknown) {
             return "Укажите корректный email или телефон для связи.";
         case "RATE_LIMIT":
             return "Слишком много попыток отправки. Попробуйте еще раз через несколько минут.";
+        case "MAIL_CONFIG_MISSING":
+        case "MAIL_CONFIG_INVALID":
+            return "Почтовые настройки не заполнены. Проверьте SMTP в админ-панели.";
         default:
             return "Не удалось отправить заявку. Попробуйте еще раз чуть позже.";
     }
@@ -173,24 +166,28 @@ export async function sendProjectRequest(formData: FormData): Promise<FormState>
         assertRateLimit(bucketKey);
 
         const { name, contact, message } = validateFormData(formData);
-        const mailFrom = getRequiredEnv("MAIL_FROM");
-        const mailTo = getRequiredEnv("MAIL_TO")
-            .split(",")
-            .map((item) => item.trim())
-            .filter(Boolean);
+        const mailConfig = await getMailerConfig();
 
-        if (!mailTo.length) {
-            throw new Error("Missing recipient list in MAIL_TO");
+        if (!mailConfig.recipients.length) {
+            throw new Error("MAIL_CONFIG_MISSING");
         }
 
-        const transporter = getTransporter();
+        const transporter = nodemailer.createTransport({
+            host: mailConfig.host,
+            port: mailConfig.port,
+            secure: mailConfig.secure,
+            auth: {
+                user: mailConfig.user,
+                pass: mailConfig.pass
+            }
+        });
         const safeName = escapeHtml(name);
         const safeContact = escapeHtml(contact);
         const safeMessage = escapeHtml(message).replaceAll("\n", "<br />");
 
         await transporter.sendMail({
-            from: mailFrom,
-            to: mailTo,
+            from: mailConfig.mailFrom,
+            to: mailConfig.recipients,
             replyTo: contact.includes("@") ? contact : undefined,
             subject: `Новая заявка с сайта от ${name}`,
             text: [

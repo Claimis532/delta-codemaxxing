@@ -7,16 +7,21 @@ import { PartnersSection } from "@/components/PartnersSection";
 import { AdvantagesSection } from "@/components/AdvantagesSection";
 import { Footer } from "@/components/Footer";
 import { ModalProvider } from "@/components/ModalProvider";
+import { getSiteContent } from "@/lib/site-content";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+    const siteContent = await getSiteContent();
+
     return (
         <main className="bg-delta-paper text-delta-ink">
             <ModalProvider>
                 <Header />
 
-                <AboutSection />
+                <AboutSection hero={siteContent.hero} />
 
-                <ProjectsSection />
+                <ProjectsSection projects={siteContent.projects} />
 
                 <LifecycleSection />
 
@@ -26,7 +31,7 @@ export default function Home() {
 
                 <section className="relative overflow-hidden bg-delta-cta">
                     <CtaSection />
-                    <Footer />
+                    <Footer footer={siteContent.footer} />
                 </section>
             </ModalProvider>
         </main>

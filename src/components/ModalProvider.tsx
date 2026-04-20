@@ -8,7 +8,7 @@ import {
     useState,
     type ReactNode
 } from "react";
-import { type ProjectCategory } from "@/constants/content";
+import type { ProjectCard } from "@/types/site-content";
 
 const ContactModal = dynamic(
     () => import("@/components/ContactModal").then((module) => module.ContactModal),
@@ -22,14 +22,14 @@ const ProjectCategoryModal = dynamic(
 
 type ModalActions = {
     openContactModal: () => void;
-    openCategoryModal: (category: ProjectCategory) => void;
+    openCategoryModal: (category: ProjectCard) => void;
 };
 
 const ModalActionsContext = createContext<ModalActions | null>(null);
 
 export function ModalProvider({ children }: { children: ReactNode }) {
     const [isContactOpen, setIsContactOpen] = useState(false);
-    const [activeCategory, setActiveCategory] = useState<ProjectCategory | null>(null);
+    const [activeCategory, setActiveCategory] = useState<ProjectCard | null>(null);
     const [actions] = useState<ModalActions>(() => ({
         openContactModal: () => setIsContactOpen(true),
         openCategoryModal: (category) => setActiveCategory(category)

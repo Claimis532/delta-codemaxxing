@@ -2,51 +2,12 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { rise } from "@/lib/animation";
-import { containerClass, projectCategories } from "@/constants/content";
+import { containerClass } from "@/constants/content";
 import { BrandOrbitCluster } from "@/components/BrandDecor";
 import { useModalActions } from "@/components/ModalProvider";
-
-const baseProjectCategories = projectCategories.slice(0, 3);
-
-const projectCards = [
-    ...baseProjectCategories.map((item) => ({
-        ...item,
-        renderKey: item.id,
-        isPlaceholder: false
-    })),
-    {
-        ...baseProjectCategories[0],
-        renderKey: "placeholder-museums",
-        title: "Музеи и выставочные пространства",
-        description: "Скоро добавим подборку проектов и решений по этому направлению.",
-        badge: "Скоро",
-        objectNames: [],
-        gallery: [],
-        isPlaceholder: true
-    },
-    {
-        ...baseProjectCategories[1],
-        renderKey: "placeholder-halls",
-        title: "Конференц-залы и аудитории",
-        description: "Этот блок пока пустой. Здесь появятся кейсы для деловых и учебных пространств.",
-        badge: "Скоро",
-        objectNames: [],
-        gallery: [],
-        isPlaceholder: true
-    },
-    {
-        ...baseProjectCategories[2],
-        renderKey: "placeholder-multispace",
-        title: "Многофункциональные площадки",
-        description: "Готовим отдельную подборку решений для гибких общественных и событийных площадок.",
-        badge: "Скоро",
-        objectNames: [],
-        gallery: [],
-        isPlaceholder: true
-    }
-] as const;
+import type { ProjectsSectionContent } from "@/types/site-content";
 
 function CarouselArrow({
     direction,
@@ -81,7 +42,7 @@ function CarouselArrow({
     );
 }
 
-export const ProjectsSection = () => {
+export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent }) => {
     const { openCategoryModal } = useModalActions();
     const carouselRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -109,7 +70,7 @@ export const ProjectsSection = () => {
             container.removeEventListener("scroll", updateScrollState);
             window.removeEventListener("resize", updateScrollState);
         };
-    }, []);
+    }, [projects.cards.length]);
 
     const scrollCarousel = (direction: "left" | "right") => {
         const container = carouselRef.current;
@@ -139,10 +100,10 @@ export const ProjectsSection = () => {
                 <BrandOrbitCluster className="pointer-events-none absolute -right-14 -top-10 hidden h-[240px] w-[300px] opacity-[0.42] md:block md:-right-24 md:-top-16 md:h-[320px] md:w-[400px]" />
                 <div className="relative max-w-full">
                     <h2 className="font-[var(--font-raleway)] text-4xl font-semibold md:text-[58px]">
-                        Мы проектируем
+                        {projects.title}
                     </h2>
                     <p className="mt-4 text-base text-black/62 md:text-[22px]">
-                        Театры, учебные пространства и спортивные объекты. Откройте карточку, чтобы посмотреть фото реализованных площадок и список объектов по направлению.
+                        {projects.description}
                     </p>
                 </div>
                 <div className="relative mt-10 md:mt-12">
@@ -160,9 +121,9 @@ export const ProjectsSection = () => {
                         ref={carouselRef}
                         className="no-scrollbar -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 md:-mx-8 md:px-8"
                     >
-                        {projectCards.map((item, idx) => (
+                        {projects.cards.map((item, index) => (
                             <motion.button
-                                key={item.renderKey}
+                                key={item.id}
                                 data-project-card="true"
                                 type="button"
                                 onClick={() => {
@@ -174,7 +135,7 @@ export const ProjectsSection = () => {
                                 initial="hidden"
                                 whileInView="show"
                                 viewport={{ once: true, amount: 0.2 }}
-                                custom={0.1 + idx * 0.08}
+                                custom={0.1 + index * 0.08}
                                 aria-disabled={item.isPlaceholder}
                                 className={`group min-w-[85%] snap-start overflow-hidden rounded-[28px] border border-black/8 bg-white text-left shadow-[0_16px_36px_rgba(17,24,39,0.08)] transition md:min-w-[47%] lg:min-w-[31%] ${item.isPlaceholder ? "cursor-default" : "hover:-translate-y-1 hover:shadow-[0_24px_52px_rgba(17,24,39,0.12)]"}`}
                             >
@@ -204,13 +165,13 @@ export const ProjectsSection = () => {
                                         {item.description}
                                     </p>
 
-                                    {!item.isPlaceholder && (
+                                    {!item.isPlaceholder ? (
                                         <div className="absolute bottom-6 right-5 inline-flex items-center justify-center text-delta-blue drop-shadow-[0_10px_20px_rgba(255,255,255,0.85)]">
                                             <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                                                 <path d="M5 15L15 5M8 5H15V12" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         </div>
-                                    )}
+                                    ) : null}
                                 </div>
                             </motion.button>
                         ))}

@@ -3,10 +3,10 @@
 import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { type ProjectCategory } from "@/constants/content";
+import type { ProjectCard } from "@/types/site-content";
 
 interface ProjectCategoryModalProps {
-    category: ProjectCategory | null;
+    category: ProjectCard | null;
     isOpen: boolean;
     closeModal: () => void;
 }
@@ -18,12 +18,20 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
         return null;
     }
 
-    const activePhoto = category.gallery[activeIndex];
-    const hasMultiplePhotos = category.gallery.length > 1;
-    const showPhotoCaption = category.id !== "schools";
+    const gallery = category.gallery.length
+        ? category.gallery
+        : [
+              {
+                  id: `${category.id}-fallback`,
+                  src: category.coverImage,
+                  objectName: category.title
+              }
+          ];
+    const activePhoto = gallery[Math.min(activeIndex, gallery.length - 1)];
+    const hasMultiplePhotos = gallery.length > 1;
 
-    const goPrev = () => setActiveIndex((current) => (current === 0 ? category.gallery.length - 1 : current - 1));
-    const goNext = () => setActiveIndex((current) => (current === category.gallery.length - 1 ? 0 : current + 1));
+    const goPrev = () => setActiveIndex((current) => (current === 0 ? gallery.length - 1 : current - 1));
+    const goNext = () => setActiveIndex((current) => (current === gallery.length - 1 ? 0 : current + 1));
 
     return (
         <Transition show={isOpen} as={Fragment}>
@@ -66,13 +74,12 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
                                         onClick={closeModal}
                                         className="flex h-11 w-11 items-center justify-center rounded-full bg-black/[0.04] text-xl text-black/45 transition hover:text-black"
                                     >
-                                        ×
+                                        x
                                     </button>
                                 </div>
 
                                 <div className="p-4 md:p-6">
                                     <div className="grid gap-0">
-                                        {/* Блок с фото */}
                                         <div className="relative overflow-hidden rounded-[28px] bg-black/5">
                                             <div className="relative aspect-[16/9] md:aspect-[21/9]">
                                                 <Image
@@ -85,27 +92,26 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
                                                 />
                                             </div>
 
-                                            {hasMultiplePhotos && (
+                                            {hasMultiplePhotos ? (
                                                 <>
                                                     <button
                                                         type="button"
                                                         onClick={goPrev}
                                                         className="absolute left-4 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg text-delta-ink shadow-lg transition hover:scale-105 hover:bg-white"
                                                     >
-                                                        ←
+                                                        {"<"}
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={goNext}
                                                         className="absolute right-4 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg text-delta-ink shadow-lg transition hover:scale-105 hover:bg-white"
                                                     >
-                                                        →
+                                                        {">"}
                                                     </button>
                                                 </>
-                                            )}
+                                            ) : null}
                                         </div>
 
-                                        {/* Описание под фото */}
                                         <div className="mt-8 grid gap-8 md:grid-cols-[1fr_300px]">
                                             <div>
                                                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-black/40">
@@ -125,23 +131,24 @@ export function ProjectCategoryModal({ category, isOpen, closeModal }: ProjectCa
                                             </div>
                                         </div>
 
-                                        {/* СПИСОК ОБЪЕКТОВ ТОЧКАМИ */}
                                         <div className="mt-10 border-t border-black/5 pt-8">
                                             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-black/40">
                                                 Все реализованные объекты
                                             </p>
-                                            <ul className="mt-6 grid grid-cols-1 gap-x-10 gap-y-3 md:grid-cols-2">
-                                                {category.objectNames.map((name, idx) => (
-                                                    <li
-                                                        key={idx}
-                                                        className="flex items-start text-[14px] leading-snug text-black/80"
-                                                    >
-                                                        {/* Кастомная точка-маркер */}
-                                                        <span className="mr-3 mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-delta-blue/40" />
-                                                        {name}
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                            {category.objectNames.length ? (
+                                                <ul className="mt-6 grid grid-cols-1 gap-x-10 gap-y-3 md:grid-cols-2">
+                                                    {category.objectNames.map((name, index) => (
+                                                        <li key={`${name}-${index}`} className="flex items-start text-[14px] leading-snug text-black/80">
+                                                            <span className="mr-3 mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-delta-blue/40" />
+                                                            {name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p className="mt-4 text-sm leading-relaxed text-black/50">
+                                                    Список объектов для этого раздела пока не заполнен.
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
