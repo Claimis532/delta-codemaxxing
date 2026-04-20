@@ -153,5 +153,19 @@ body.modal-open .partner-marquee {
 }
 
 .navbar {
-  color: white;
+  color: inherit;
+}
+
+.header-link {
+  color: rgba(255, 255, 255, 0.94);
+  transition:
+    color 180ms ease,
+    text-shadow 180ms ease,
+    opacity 180ms ease,
+    background-color 180ms ease;
+}
+
+.header-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
 }
