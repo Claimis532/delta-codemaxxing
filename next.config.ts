@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "50mb",
+    },
+  },
   // Убрали output: 'export', теперь это полноценное приложение
   images: {
     formats: ["image/avif", "image/webp"],

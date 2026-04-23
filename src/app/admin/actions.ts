@@ -46,6 +46,25 @@ function normalizePhoneHref(phone: string, phoneHref: string) {
     return normalized || phoneHref.trim();
 }
 
+function normalizeImageSrc(value: string) {
+    const candidate = value.trim();
+
+    if (!candidate) {
+        return "";
+    }
+
+    if (candidate.startsWith("/")) {
+        return candidate;
+    }
+
+    try {
+        const url = new URL(candidate);
+        return url.protocol === "http:" || url.protocol === "https:" ? candidate : "";
+    } catch {
+        return "";
+    }
+}
+
 function parseJsonField<T>(formData: FormData, key: string): T | null {
     const raw = formData.get(key);
 
@@ -194,7 +213,7 @@ export async function saveHeroSettingsAction(formData: FormData): Promise<AdminA
                     const currentPhoto = currentPhotos.get(photoId);
                     const file = getFileEntry(formData, `hero-file:${photo.id}`);
                     const uploadedPath = file ? await saveUploadedImage(file, "hero") : "";
-                    const src = uploadedPath || photo.src?.trim() || currentPhoto?.src || "";
+                    const src = uploadedPath || normalizeImageSrc(photo.src || "") || currentPhoto?.src || "";
 
                     if (!src) {
                         return null;
@@ -281,7 +300,7 @@ export async function saveProjectsSettingsAction(
                                 const currentItem = currentGallery.get(galleryId);
                                 const file = getFileEntry(formData, `project-gallery:${card.id}:${item.id}`);
                                 const uploadedPath = file ? await saveUploadedImage(file, "projects") : "";
-                                const src = uploadedPath || item.src?.trim() || currentItem?.src || "";
+                                const src = uploadedPath || normalizeImageSrc(item.src || "") || currentItem?.src || "";
 
                                 if (!src) {
                                     return null;
@@ -306,7 +325,12 @@ export async function saveProjectsSettingsAction(
                         : currentCard?.objectNames || [];
                     const title = card.title?.trim() || currentCard?.title || "";
                     const coverImage =
-                        uploadedCover || card.coverImage?.trim() || currentCard?.coverImage || gallery[0]?.src || "";
+                        uploadedCover ||
+                        gallery[0]?.src ||
+                        normalizeImageSrc(card.coverImage || "") ||
+                        normalizeImageSrc(currentCard?.coverImage || "") ||
+                        currentCard?.gallery[0]?.src ||
+                        "";
 
                     if (!title || !coverImage) {
                         return null;

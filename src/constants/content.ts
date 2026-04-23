@@ -155,7 +155,7 @@ export const projectCategories: ProjectCategory[] = [
         title: "Музеи и выставочные пространства",
         description: "Скоро добавим подборку проектов и решений по этому направлению.",
         badge: "Скоро",
-        coverImage: "/assets/photoOBJ/culture/СЃРёРЅР°СЂР° С†РµРЅС‚СЂ.jpg",
+        coverImage: "/assets/photoOBJ/culture/синара центр.jpg",
         objectNames: [],
         gallery: [],
         isPlaceholder: true
@@ -175,7 +175,7 @@ export const projectCategories: ProjectCategory[] = [
         title: "Многофункциональные площадки",
         description: "Готовим отдельную подборку решений для гибких общественных и событийных площадок.",
         badge: "Скоро",
-        coverImage: "/assets/photoOBJ/sport/Р”РІРѕСЂРµС† РґР·СЋРґРѕ.jpg",
+        coverImage: "/assets/photoOBJ/sport/Дворец дзюдо.jpg",
         objectNames: [],
         gallery: [],
         isPlaceholder: true

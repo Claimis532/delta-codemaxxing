@@ -18,9 +18,97 @@ import type {
 } from "@/types/site-content";
 
 const LEGACY_CONTENT_FILE_PATH = path.join(process.cwd(), "data", "site-content.json");
+const PUBLIC_ROOT = path.join(process.cwd(), "public");
+const CP1251_EXTENDED_CHARS =
+    "ЂЃ‚ѓ„…†‡€‰Љ‹ЊЌЋЏђ‘’“”•–—�™љ›њќћџ ЎўЈ¤Ґ¦§Ё©Є«¬­®Ї°±Ііґµ¶·ё№є»јЅѕї" +
+    "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" +
+    "абвгдежзийклмнопрстуфхцчшщъыьэюя";
 
 function createId(prefix: string, index: number) {
     return `${prefix}-${index + 1}`;
+}
+
+function encodeCp1251(value: string) {
+    const bytes: number[] = [];
+
+    for (const char of value) {
+        const code = char.charCodeAt(0);
+
+        if (code <= 0x7f) {
+            bytes.push(code);
+            continue;
+        }
+
+        const extendedIndex = CP1251_EXTENDED_CHARS.indexOf(char);
+
+        if (extendedIndex === -1) {
+            return null;
+        }
+
+        bytes.push(0x80 + extendedIndex);
+    }
+
+    return Buffer.from(bytes);
+}
+
+function repairMojibake(value: string) {
+    if (!/[РСЁЇҐЄІієї]/.test(value)) {
+        return value;
+    }
+
+    const encoded = encodeCp1251(value);
+
+    if (!encoded) {
+        return value;
+    }
+
+    try {
+        return encoded.toString("utf8");
+    } catch {
+        return value;
+    }
+}
+
+function getPublicPath(assetPath: string) {
+    if (!assetPath.startsWith("/")) {
+        return null;
+    }
+
+    const [pathname] = assetPath.split(/[?#]/);
+    return path.join(PUBLIC_ROOT, ...pathname.split("/").filter(Boolean));
+}
+
+function publicAssetExists(assetPath: string) {
+    const publicPath = getPublicPath(assetPath);
+    return publicPath ? existsSync(publicPath) : false;
+}
+
+function normalizeAssetPath(src: string, fallback: string) {
+    const candidate = src.trim();
+
+    if (candidate && publicAssetExists(candidate)) {
+        return candidate;
+    }
+
+    const repairedCandidate = repairMojibake(candidate);
+
+    if (repairedCandidate && publicAssetExists(repairedCandidate)) {
+        return repairedCandidate;
+    }
+
+    const fallbackCandidate = fallback.trim();
+
+    if (fallbackCandidate && publicAssetExists(fallbackCandidate)) {
+        return fallbackCandidate;
+    }
+
+    const repairedFallback = repairMojibake(fallbackCandidate);
+
+    if (repairedFallback && publicAssetExists(repairedFallback)) {
+        return repairedFallback;
+    }
+
+    return repairedCandidate || fallbackCandidate || candidate;
 }
 
 const defaultHeroPhotos: HeroPhoto[] = [
@@ -103,7 +191,7 @@ function normalizeHeroPhoto(value: unknown, fallback: HeroPhoto, index: number):
     }
 
     const candidate = value as Partial<HeroPhoto>;
-    const src = asString(candidate.src, fallback.src);
+    const src = normalizeAssetPath(asString(candidate.src, fallback.src), fallback.src);
 
     if (!src) {
         return null;
@@ -174,7 +262,7 @@ function normalizeGalleryItem(
     }
 
     const candidate = value as Partial<ProjectGalleryItem>;
-    const src = asString(candidate.src, fallback.src);
+    const src = normalizeAssetPath(asString(candidate.src, fallback.src), fallback.src);
 
     if (!src) {
         return null;
@@ -207,7 +295,10 @@ function normalizeProjectCard(value: unknown, fallback: ProjectCard, index: numb
         })
         .filter((item): item is ProjectGalleryItem => Boolean(item));
 
-    const coverImage = asString(candidate.coverImage, fallback.coverImage || gallery[0]?.src || "");
+    const coverImage = normalizeAssetPath(
+        asString(candidate.coverImage, fallback.coverImage || gallery[0]?.src || ""),
+        fallback.coverImage || gallery[0]?.src || ""
+    );
 
     if (!coverImage) {
         return null;

@@ -100,6 +100,37 @@ function splitLines(value: string) {
         .filter(Boolean);
 }
 
+function isRenderableImageSrc(src: string) {
+    const candidate = src.trim();
+
+    if (!candidate) {
+        return false;
+    }
+
+    if (candidate.startsWith("/")) {
+        return true;
+    }
+
+    try {
+        const url = new URL(candidate);
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+        return false;
+    }
+}
+
+function getRenderableImageSrc(src: string) {
+    return isRenderableImageSrc(src) ? src.trim() : "";
+}
+
+function getCardPreviewSrc(card: EditableProjectCard) {
+    return (
+        getRenderableImageSrc(card.coverImage) ||
+        card.gallery.map((item) => getRenderableImageSrc(item.src)).find(Boolean) ||
+        ""
+    );
+}
+
 function hydrateHero(hero: HeroSection): EditableHeroSection {
     return {
         ...hero,
@@ -229,10 +260,12 @@ function ImagePreview({
     src: string;
     alt: string;
 }) {
+    const imageSrc = getRenderableImageSrc(src);
+
     return (
         <div className="relative h-40 overflow-hidden rounded-2xl border border-black/10 bg-[rgba(38,38,116,0.04)]">
-            {src ? (
-                <Image src={src} alt={alt} fill sizes="320px" className="object-cover" />
+            {imageSrc ? (
+                <Image src={imageSrc} alt={alt} fill sizes="320px" className="object-cover" />
             ) : (
                 <div className="flex h-full items-center justify-center text-sm text-black/40">Изображение не выбрано</div>
             )}
@@ -275,6 +308,10 @@ function AdminSectionNavigation({
     activeSection: AdminSectionId;
     onSelect: (sectionId: AdminSectionId) => void;
 }) {
+    const orderedSections = ["hero", "projects", "footer", "mail"].flatMap((sectionId) =>
+        adminSections.filter((section) => section.id === sectionId)
+    );
+
     return (
         <aside className="rounded-[32px] border border-black/10 bg-white p-5 shadow-[0_18px_50px_rgba(17,24,39,0.06)] md:p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-delta-blue/68">
@@ -288,7 +325,7 @@ function AdminSectionNavigation({
             </p>
 
             <div className="mt-5 flex gap-3 overflow-x-auto pb-1 xl:flex-col xl:overflow-visible xl:pb-0">
-                {adminSections.map((section, index) => {
+                {orderedSections.map((section, index) => {
                     const isActive = section.id === activeSection;
 
                     return (
@@ -911,6 +948,7 @@ function ProjectsSettingsEditor({ initialProjects }: { initialProjects: Projects
             <div className="mt-4 space-y-5">
                 {projects.cards.map((card, index) => {
                     const isExpanded = expandedCardId === card.id;
+                    const previewSrc = getCardPreviewSrc(card);
 
                     return (
                         <div key={card.id} className="rounded-[28px] border border-black/10 bg-[rgba(38,38,116,0.03)] p-4 md:p-5">
@@ -921,9 +959,9 @@ function ProjectsSettingsEditor({ initialProjects }: { initialProjects: Projects
                                     className="flex min-w-0 flex-1 items-center gap-4 text-left"
                                 >
                                     <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border border-black/10 bg-white/70">
-                                        {card.coverImage ? (
+                                        {previewSrc ? (
                                             <Image
-                                                src={card.coverImage}
+                                                src={previewSrc}
                                                 alt={card.title}
                                                 fill
                                                 sizes="112px"
@@ -1040,21 +1078,13 @@ function ProjectsSettingsEditor({ initialProjects }: { initialProjects: Projects
                                                 />
                                             </div>
                                             <div className="md:col-span-2">
-                                                <TextInput
-                                                    label="Путь к обложке"
-                                                    value={card.coverImage}
-                                                    onChange={(event) =>
-                                                        updateCard(card.id, (current) => ({
-                                                            ...current,
-                                                            coverImage: event.target.value
-                                                        }))
-                                                    }
-                                                />
-                                            </div>
-                                            <div className="md:col-span-2">
                                                 <Field
                                                     label="Загрузить новую обложку"
-                                                    hint={card.pendingCoverFile ? `Выбрано: ${card.pendingCoverFile.name}` : undefined}
+                                                    hint={
+                                                        card.pendingCoverFile
+                                                            ? `Выбрано: ${card.pendingCoverFile.name}`
+                                                            : "Если отдельную обложку не загружать, будет использовано первое фото из галереи."
+                                                    }
                                                 >
                                                     <input
                                                         type="file"
@@ -1241,7 +1271,7 @@ export function AdminDashboard({
     initialMailSettings: MailSettingsForAdmin;
     authConfigured: boolean;
 }) {
-    const [activeSection, setActiveSection] = useState<AdminSectionId>("footer");
+    const [activeSection, setActiveSection] = useState<AdminSectionId>("hero");
 
     return (
         <main className="min-h-screen bg-[linear-gradient(180deg,#f5f7fb_0%,#eef2ff_100%)] px-4 py-6 text-delta-ink md:px-6 md:py-8">
