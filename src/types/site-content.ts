@@ -50,10 +50,24 @@ export interface ProjectsSectionContent {
     cards: ProjectCard[];
 }
 
+export interface AdvantageItem {
+    id: string;
+    title: string;
+    description: string;
+}
+
+export interface AdvantagesSectionContent {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: AdvantageItem[];
+}
+
 export interface SiteContent {
     hero: HeroSection;
     footer: FooterSection;
     projects: ProjectsSectionContent;
+    advantages: AdvantagesSectionContent;
 }
 
 export interface MailSettings {

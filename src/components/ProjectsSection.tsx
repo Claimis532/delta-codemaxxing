@@ -42,6 +42,14 @@ function CarouselArrow({
     );
 }
 
+function getCarouselScrollStep(container: HTMLElement) {
+    const firstCard = container.querySelector<HTMLElement>("[data-project-card='true']");
+    const styles = window.getComputedStyle(container);
+    const gap = Number.parseFloat(styles.columnGap || styles.gap || "16") || 16;
+
+    return (firstCard?.offsetWidth ?? 320) + gap;
+}
+
 export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent }) => {
     const { openCategoryModal } = useModalActions();
     const carouselRef = useRef<HTMLDivElement>(null);
@@ -72,6 +80,48 @@ export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent
         };
     }, [projects.cards.length]);
 
+    useEffect(() => {
+        const container = carouselRef.current;
+
+        if (!container || projects.cards.length < 2) {
+            return;
+        }
+
+        const speedPxPerMs = 0.045;
+        let animationFrameId = 0;
+        let previousTime = performance.now();
+        let resumeAt = previousTime + 800;
+
+        const pauseBriefly = () => {
+            resumeAt = performance.now() + 1400;
+        };
+
+        const tick = (time: number) => {
+            const maxScrollLeft = Math.max(container.scrollWidth - container.clientWidth, 0);
+            const elapsed = Math.min(time - previousTime, 64);
+            previousTime = time;
+
+            if (maxScrollLeft > 8 && time >= resumeAt) {
+                const nextScrollLeft = container.scrollLeft + elapsed * speedPxPerMs;
+                container.scrollLeft = nextScrollLeft >= maxScrollLeft - 1 ? 0 : nextScrollLeft;
+            }
+
+            animationFrameId = window.requestAnimationFrame(tick);
+        };
+
+        container.addEventListener("pointerdown", pauseBriefly, { passive: true });
+        container.addEventListener("wheel", pauseBriefly, { passive: true });
+        container.addEventListener("touchstart", pauseBriefly, { passive: true });
+        animationFrameId = window.requestAnimationFrame(tick);
+
+        return () => {
+            container.removeEventListener("pointerdown", pauseBriefly);
+            container.removeEventListener("wheel", pauseBriefly);
+            container.removeEventListener("touchstart", pauseBriefly);
+            window.cancelAnimationFrame(animationFrameId);
+        };
+    }, [projects.cards.length]);
+
     const scrollCarousel = (direction: "left" | "right") => {
         const container = carouselRef.current;
 
@@ -79,10 +129,7 @@ export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent
             return;
         }
 
-        const firstCard = container.querySelector<HTMLElement>("[data-project-card='true']");
-        const cardWidth = firstCard?.offsetWidth ?? 320;
-        const gap = 16;
-        const delta = cardWidth + gap;
+        const delta = getCarouselScrollStep(container);
 
         container.scrollBy({
             left: direction === "left" ? -delta : delta,
@@ -119,7 +166,7 @@ export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent
                     </div>
                     <div
                         ref={carouselRef}
-                        className="no-scrollbar -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 md:-mx-8 md:px-8"
+                        className="no-scrollbar -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 md:-mx-8 md:snap-none md:px-8"
                     >
                         {projects.cards.map((item, index) => (
                             <motion.button

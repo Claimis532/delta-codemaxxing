@@ -86,6 +86,23 @@ function initializeSchema(db: DatabaseSync) {
         CREATE INDEX IF NOT EXISTS idx_project_gallery_items_card_order
             ON project_gallery_items (card_id, sort_order);
 
+        CREATE TABLE IF NOT EXISTS advantages_section (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            eyebrow TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS advantage_items (
+            id TEXT PRIMARY KEY,
+            sort_order INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_advantage_items_order
+            ON advantage_items (sort_order);
+
         CREATE TABLE IF NOT EXISTS mail_settings (
             id INTEGER PRIMARY KEY CHECK (id = 1),
             host TEXT NOT NULL,

@@ -10,12 +10,15 @@ import {
 } from "react";
 import {
     logoutAdminAction,
+    saveAdvantagesSettingsAction,
     saveFooterSettingsAction,
     saveHeroSettingsAction,
     saveMailSettingsAction,
     saveProjectsSettingsAction
 } from "@/app/admin/actions";
 import type {
+    AdvantageItem,
+    AdvantagesSectionContent,
     AdminActionResult,
     FooterSection,
     HeroPhoto,
@@ -48,7 +51,7 @@ type EditableProjectsSection = Omit<ProjectsSectionContent, "cards"> & {
     cards: EditableProjectCard[];
 };
 
-type AdminSectionId = "footer" | "mail" | "hero" | "projects";
+type AdminSectionId = "footer" | "mail" | "hero" | "projects" | "advantages";
 
 const adminSections: Array<{
     id: AdminSectionId;
@@ -74,6 +77,11 @@ const adminSections: Array<{
         id: "projects",
         label: "Мы проектируем",
         description: "Карточки, обложки и галереи"
+    },
+    {
+        id: "advantages",
+        label: "Преимущества",
+        description: "Заголовки и тексты блока преимуществ"
     }
 ];
 
@@ -308,7 +316,7 @@ function AdminSectionNavigation({
     activeSection: AdminSectionId;
     onSelect: (sectionId: AdminSectionId) => void;
 }) {
-    const orderedSections = ["hero", "projects", "footer", "mail"].flatMap((sectionId) =>
+    const orderedSections = ["hero", "projects", "advantages", "footer", "mail"].flatMap((sectionId) =>
         adminSections.filter((section) => section.id === sectionId)
     );
 
@@ -806,6 +814,178 @@ function HeroSettingsEditor({ initialHero }: { initialHero: HeroSection }) {
     );
 }
 
+function AdvantagesSettingsEditor({ initialAdvantages }: { initialAdvantages: AdvantagesSectionContent }) {
+    const [isPending, startTransition] = useTransition();
+    const [result, setResult] = useState<AdminActionResult<AdvantagesSectionContent> | null>(null);
+    const [advantages, setAdvantages] = useState(initialAdvantages);
+
+    const updateItem = (itemId: string, updater: (item: AdvantageItem) => AdvantageItem) => {
+        setAdvantages((current) => ({
+            ...current,
+            items: current.items.map((item) => (item.id === itemId ? updater(item) : item))
+        }));
+    };
+
+    const handleSave = () => {
+        startTransition(() => {
+            void (async () => {
+                const formData = new FormData();
+                formData.set("advantages", JSON.stringify(advantages));
+
+                const response = await saveAdvantagesSettingsAction(formData);
+                setResult(response);
+
+                if (response.success && response.data) {
+                    setAdvantages(response.data);
+                }
+            })();
+        });
+    };
+
+    return (
+        <SectionCard
+            title="Преимущества"
+            description="Редактирование заголовка, вводного текста и списка преимуществ на главной странице."
+            actions={
+                <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={isPending}
+                    className="rounded-2xl bg-delta-blue px-5 py-3 text-sm font-semibold text-white transition hover:bg-delta-violet disabled:opacity-60"
+                >
+                    {isPending ? "Сохраняем..." : "Сохранить преимущества"}
+                </button>
+            }
+        >
+            <div className="grid gap-4 md:grid-cols-2">
+                <TextInput
+                    label="Надзаголовок"
+                    value={advantages.eyebrow}
+                    onChange={(event) => setAdvantages((current) => ({ ...current, eyebrow: event.target.value }))}
+                />
+                <TextInput
+                    label="Заголовок секции"
+                    value={advantages.title}
+                    onChange={(event) => setAdvantages((current) => ({ ...current, title: event.target.value }))}
+                />
+                <div className="md:col-span-2">
+                    <TextArea
+                        label="Описание секции"
+                        rows={3}
+                        value={advantages.description}
+                        onChange={(event) => setAdvantages((current) => ({ ...current, description: event.target.value }))}
+                    />
+                </div>
+            </div>
+
+            <div className="mt-8 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-delta-ink">Список преимуществ</h3>
+                <button
+                    type="button"
+                    onClick={() =>
+                        setAdvantages((current) => ({
+                            ...current,
+                            items: [
+                                ...current.items,
+                                {
+                                    id: createLocalId("advantage"),
+                                    title: "Новое преимущество",
+                                    description: ""
+                                }
+                            ]
+                        }))
+                    }
+                    className="rounded-2xl border border-black/10 px-4 py-2 text-sm font-medium text-black/70 transition hover:border-delta-blue hover:text-delta-blue"
+                >
+                    Добавить преимущество
+                </button>
+            </div>
+
+            <div className="mt-4 space-y-4">
+                {advantages.items.map((item, index) => (
+                    <div key={item.id} className="rounded-[28px] border border-black/10 bg-[rgba(38,38,116,0.03)] p-4 md:p-5">
+                        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                                <p className="text-sm font-semibold text-delta-ink">Преимущество {index + 1}</p>
+                                <p className="text-xs text-black/45">Номер на сайте формируется автоматически по порядку.</p>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setAdvantages((current) => ({
+                                            ...current,
+                                            items: moveItem(current.items, index, index - 1)
+                                        }))
+                                    }
+                                    className="rounded-xl border border-black/10 px-3 py-2 text-xs font-medium text-black/60 transition hover:border-delta-blue hover:text-delta-blue"
+                                >
+                                    Вверх
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setAdvantages((current) => ({
+                                            ...current,
+                                            items: moveItem(current.items, index, index + 1)
+                                        }))
+                                    }
+                                    className="rounded-xl border border-black/10 px-3 py-2 text-xs font-medium text-black/60 transition hover:border-delta-blue hover:text-delta-blue"
+                                >
+                                    Вниз
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setAdvantages((current) => ({
+                                            ...current,
+                                            items: current.items.filter((currentItem) => currentItem.id !== item.id)
+                                        }))
+                                    }
+                                    className="rounded-xl border border-red-200 px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                                >
+                                    Удалить
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <TextInput
+                                label="Заголовок"
+                                value={item.title}
+                                onChange={(event) =>
+                                    updateItem(item.id, (current) => ({
+                                        ...current,
+                                        title: event.target.value
+                                    }))
+                                }
+                            />
+                            <div className="md:col-span-2">
+                                <TextArea
+                                    label="Описание"
+                                    rows={4}
+                                    value={item.description}
+                                    onChange={(event) =>
+                                        updateItem(item.id, (current) => ({
+                                            ...current,
+                                            description: event.target.value
+                                        }))
+                                    }
+                                />
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="mt-4">
+                <StatusMessage result={result} />
+            </div>
+        </SectionCard>
+    );
+}
+
 function ProjectsSettingsEditor({ initialProjects }: { initialProjects: ProjectsSectionContent }) {
     const [isPending, startTransition] = useTransition();
     const [result, setResult] = useState<AdminActionResult<ProjectsSectionContent> | null>(null);
@@ -1287,7 +1467,7 @@ export function AdminDashboard({
                             </h1>
                             <p className="mt-4 text-sm leading-relaxed text-black/62 md:text-base">
                                 Настройки сохраняются в файлы проекта. Здесь можно редактировать главный экран, карусель разделов,
-                                контакты в футере и SMTP для обратной связи.
+                                преимущества, контакты в футере и SMTP для обратной связи.
                             </p>
                         </div>
 
@@ -1334,6 +1514,10 @@ export function AdminDashboard({
 
                         <div className={activeSection === "projects" ? "block" : "hidden"}>
                             <ProjectsSettingsEditor initialProjects={initialContent.projects} />
+                        </div>
+
+                        <div className={activeSection === "advantages" ? "block" : "hidden"}>
+                            <AdvantagesSettingsEditor initialAdvantages={initialContent.advantages} />
                         </div>
                     </div>
                 </div>

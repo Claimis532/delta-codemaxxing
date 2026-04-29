@@ -13,6 +13,8 @@ import { saveUploadedImage } from "@/lib/file-storage";
 import { getMailSettings, saveMailSettings } from "@/lib/mail-settings";
 import { getSiteContent, saveSiteContent } from "@/lib/site-content";
 import type {
+    AdvantageItem,
+    AdvantagesSectionContent,
     AdminActionResult,
     FooterSection,
     HeroSection,
@@ -372,6 +374,79 @@ export async function saveProjectsSettingsAction(
             success: true,
             message: "Карусель сохранена.",
             data: updatedContent.projects
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: getActionErrorMessage(error)
+        };
+    }
+}
+
+export async function saveAdvantagesSettingsAction(
+    formData: FormData
+): Promise<AdminActionResult<AdvantagesSectionContent>> {
+    try {
+        if (!(await ensureAdminAccess())) {
+            return {
+                success: false,
+                message: "Сессия администратора истекла. Войдите заново."
+            };
+        }
+
+        const payload = parseJsonField<AdvantagesSectionContent>(formData, "advantages");
+
+        if (!payload) {
+            return {
+                success: false,
+                message: "Не удалось прочитать данные блока преимуществ."
+            };
+        }
+
+        const currentContent = await getSiteContent();
+        const currentItems = new Map(currentContent.advantages.items.map((item) => [item.id, item]));
+        const items = (payload.items || [])
+            .map((item, index) => {
+                const itemId = normalizeId(item.id || `advantage-${index + 1}`, `advantage-${index + 1}`);
+                const currentItem = currentItems.get(itemId);
+                const title = item.title?.trim() || currentItem?.title || "";
+                const description = item.description?.trim() || currentItem?.description || "";
+
+                if (!title || !description) {
+                    return null;
+                }
+
+                return {
+                    id: itemId,
+                    title,
+                    description
+                } satisfies AdvantageItem;
+            })
+            .filter((item): item is AdvantageItem => Boolean(item));
+
+        if (!items.length) {
+            return {
+                success: false,
+                message: "Добавьте хотя бы одно преимущество."
+            };
+        }
+
+        const updatedContent = await saveSiteContent({
+            ...currentContent,
+            advantages: {
+                eyebrow: payload.eyebrow?.trim() ?? "",
+                title: payload.title?.trim() ?? "",
+                description: payload.description?.trim() ?? "",
+                items
+            }
+        });
+
+        refreshAdminPages();
+
+        return {
+            success: true,
+            message: "Преимущества сохранены.",
+            data: updatedContent.advantages
         };
     } catch (error) {
         return {

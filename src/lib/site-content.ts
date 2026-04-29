@@ -8,6 +8,8 @@ import { projectCategories } from "@/constants/content";
 import { siteConfig } from "@/config/site";
 import { getDatabase, withTransaction } from "@/lib/sqlite";
 import type {
+    AdvantageItem,
+    AdvantagesSectionContent,
     FooterSection,
     HeroPhoto,
     HeroSection,
@@ -149,6 +151,27 @@ const defaultProjectCards: ProjectCard[] = projectCategories.map((category, inde
     isPlaceholder: Boolean(category.isPlaceholder)
 }));
 
+const defaultAdvantageItems: AdvantageItem[] = [
+    {
+        id: "advantage-1",
+        title: "Понимаем специфику объектов",
+        description:
+            "Работаем с театрами, школами, спортивными и общественными пространствами, где важны нормативы, сценарии использования и реальная эксплуатация."
+    },
+    {
+        id: "advantage-2",
+        title: "Ведем проект последовательно",
+        description:
+            "От первого брифа и расчета стоимости до выпуска документации и авторского надзора. Без разрывов между этапами и исполнителями."
+    },
+    {
+        id: "advantage-3",
+        title: "Большой опыт, работаем много лет",
+        description:
+            "Накопили практику на разных типах объектов и умеем находить рабочие решения там, где особенно важны сроки, бюджет и надежность эксплуатации."
+    }
+];
+
 export const defaultSiteContent: SiteContent = {
     hero: {
         eyebrow: "ЦП Дельта",
@@ -178,6 +201,13 @@ export const defaultSiteContent: SiteContent = {
         description:
             "Театры, учебные пространства и спортивные объекты. Откройте карточку, чтобы посмотреть фото реализованных площадок и список объектов по направлению.",
         cards: defaultProjectCards
+    },
+    advantages: {
+        eyebrow: "Почему с нами удобно работать",
+        title: "Преимущества",
+        description:
+            "Акцент на содержании, опыте и ясной логике работы. Без декоративного шума и без интерфейсной метафоры карточек.",
+        items: defaultAdvantageItems
     }
 };
 
@@ -338,6 +368,47 @@ function normalizeProjects(value: unknown): ProjectsSectionContent {
     };
 }
 
+function normalizeAdvantageItem(value: unknown, fallback: AdvantageItem, index: number): AdvantageItem | null {
+    if (!value || typeof value !== "object") {
+        return fallback;
+    }
+
+    const candidate = value as Partial<AdvantageItem>;
+    const title = asString(candidate.title, fallback.title);
+    const description = asString(candidate.description, fallback.description);
+
+    if (!title || !description) {
+        return null;
+    }
+
+    return {
+        id: asString(candidate.id, fallback.id || createId("advantage", index)),
+        title,
+        description
+    };
+}
+
+function normalizeAdvantages(value: unknown): AdvantagesSectionContent {
+    const fallback = defaultSiteContent.advantages;
+
+    if (!value || typeof value !== "object") {
+        return fallback;
+    }
+
+    const candidate = value as Partial<AdvantagesSectionContent>;
+    const rawItems = Array.isArray(candidate.items) ? candidate.items : fallback.items;
+    const items = rawItems
+        .map((item, index) => normalizeAdvantageItem(item, fallback.items[index] ?? fallback.items[0], index))
+        .filter((item): item is AdvantageItem => Boolean(item));
+
+    return {
+        eyebrow: asString(candidate.eyebrow, fallback.eyebrow),
+        title: asString(candidate.title, fallback.title),
+        description: asString(candidate.description, fallback.description),
+        items: items.length ? items : fallback.items
+    };
+}
+
 export function normalizeSiteContent(value: unknown): SiteContent {
     if (!value || typeof value !== "object") {
         return defaultSiteContent;
@@ -348,7 +419,8 @@ export function normalizeSiteContent(value: unknown): SiteContent {
     return {
         hero: normalizeHero(candidate.hero),
         footer: normalizeFooter(candidate.footer),
-        projects: normalizeProjects(candidate.projects)
+        projects: normalizeProjects(candidate.projects),
+        advantages: normalizeAdvantages(candidate.advantages)
     };
 }
 
@@ -506,6 +578,35 @@ function writeSiteContent(db: DatabaseSync, content: SiteContent) {
         });
     });
 
+    db.prepare(`
+        INSERT INTO advantages_section (id, eyebrow, title, description)
+        VALUES (1, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            eyebrow = excluded.eyebrow,
+            title = excluded.title,
+            description = excluded.description
+    `).run(
+        normalized.advantages.eyebrow,
+        normalized.advantages.title,
+        normalized.advantages.description
+    );
+
+    db.prepare("DELETE FROM advantage_items").run();
+
+    const insertAdvantageItem = db.prepare(`
+        INSERT INTO advantage_items (id, sort_order, title, description)
+        VALUES (?, ?, ?, ?)
+    `);
+
+    normalized.advantages.items.forEach((item, index) => {
+        insertAdvantageItem.run(
+            item.id,
+            index,
+            item.title,
+            item.description
+        );
+    });
+
     return normalized;
 }
 
@@ -620,6 +721,24 @@ function readSiteContentFromDatabase(db: DatabaseSync) {
         objectName: string;
     }>;
 
+    const advantagesSection = db.prepare(`
+        SELECT eyebrow, title, description
+        FROM advantages_section
+        WHERE id = 1
+    `).get() as unknown as
+        | {
+            eyebrow: string;
+            title: string;
+            description: string;
+        }
+        | undefined;
+
+    const advantageItems = db.prepare(`
+        SELECT id, title, description
+        FROM advantage_items
+        ORDER BY sort_order ASC
+    `).all() as unknown as AdvantageItem[];
+
     const objectNamesByCard = new Map<string, string[]>();
     objectNames.forEach((item) => {
         const current = objectNamesByCard.get(item.cardId) ?? [];
@@ -659,6 +778,12 @@ function readSiteContentFromDatabase(db: DatabaseSync) {
                 gallery: galleryByCard.get(card.id) ?? [],
                 isPlaceholder: Boolean(card.isPlaceholder)
             }))
+        },
+        advantages: {
+            eyebrow: advantagesSection?.eyebrow ?? defaultSiteContent.advantages.eyebrow,
+            title: advantagesSection?.title ?? defaultSiteContent.advantages.title,
+            description: advantagesSection?.description ?? defaultSiteContent.advantages.description,
+            items: advantageItems
         }
     });
 }

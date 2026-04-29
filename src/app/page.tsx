@@ -25,7 +25,7 @@ export default async function Home() {
 
                 <LifecycleSection />
 
-                <AdvantagesSection />
+                <AdvantagesSection advantages={siteContent.advantages} />
 
                 <PartnersSection />
 
