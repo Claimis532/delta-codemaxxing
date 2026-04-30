@@ -2,12 +2,16 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { rise } from "@/lib/animation";
 import { containerClass } from "@/constants/content";
 import { BrandOrbitCluster } from "@/components/BrandDecor";
 import { useModalActions } from "@/components/ModalProvider";
 import type { ProjectsSectionContent } from "@/types/site-content";
+
+const AUTO_SCROLL_INTERVAL_MS = 4400;
+const AUTO_SCROLL_PAUSE_MS = 6500;
+const SCROLL_EDGE_THRESHOLD = 8;
 
 function CarouselArrow({
     direction,
@@ -50,11 +54,82 @@ function getCarouselScrollStep(container: HTMLElement) {
     return (firstCard?.offsetWidth ?? 320) + gap;
 }
 
+function getCardScrollPositions(container: HTMLElement) {
+    const cards = Array.from(container.querySelectorAll<HTMLElement>("[data-project-card='true']"));
+    const containerRect = container.getBoundingClientRect();
+    const styles = window.getComputedStyle(container);
+    const paddingLeft = Number.parseFloat(styles.paddingLeft || "0") || 0;
+
+    return cards.map((card) => {
+        const cardRect = card.getBoundingClientRect();
+
+        return Math.max(cardRect.left - containerRect.left + container.scrollLeft - paddingLeft, 0);
+    });
+}
+
+function getDirectionalScrollTarget(container: HTMLElement, direction: "left" | "right", loop = false) {
+    const positions = getCardScrollPositions(container);
+
+    if (!positions.length) {
+        const fallbackStep = getCarouselScrollStep(container);
+
+        return direction === "left" ? Math.max(container.scrollLeft - fallbackStep, 0) : container.scrollLeft + fallbackStep;
+    }
+
+    const currentScroll = container.scrollLeft;
+
+    if (direction === "right") {
+        const nextPosition = positions.find((position) => position > currentScroll + SCROLL_EDGE_THRESHOLD);
+
+        return nextPosition ?? (loop ? 0 : positions[positions.length - 1]);
+    }
+
+    const previousPosition = positions
+        .slice()
+        .reverse()
+        .find((position) => position < currentScroll - SCROLL_EDGE_THRESHOLD);
+
+    return previousPosition ?? (loop ? positions[positions.length - 1] : 0);
+}
+
 export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent }) => {
     const { openCategoryModal } = useModalActions();
     const carouselRef = useRef<HTMLDivElement>(null);
+    const autoplayPausedUntilRef = useRef(0);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+
+    const updateScrollState = useCallback(() => {
+        const container = carouselRef.current;
+
+        if (!container) {
+            return;
+        }
+
+        const maxScrollLeft = Math.max(container.scrollWidth - container.clientWidth, 0);
+
+        setCanScrollLeft(container.scrollLeft > SCROLL_EDGE_THRESHOLD);
+        setCanScrollRight(container.scrollLeft < maxScrollLeft - SCROLL_EDGE_THRESHOLD);
+    }, []);
+
+    const pauseAutoplay = useCallback(() => {
+        autoplayPausedUntilRef.current = Date.now() + AUTO_SCROLL_PAUSE_MS;
+    }, []);
+
+    const scrollCarousel = useCallback((direction: "left" | "right") => {
+        const container = carouselRef.current;
+
+        if (!container) {
+            return;
+        }
+
+        pauseAutoplay();
+
+        container.scrollTo({
+            left: getDirectionalScrollTarget(container, direction),
+            behavior: "smooth"
+        });
+    }, [pauseAutoplay]);
 
     useEffect(() => {
         const container = carouselRef.current;
@@ -62,13 +137,6 @@ export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent
         if (!container) {
             return;
         }
-
-        const updateScrollState = () => {
-            const maxScrollLeft = Math.max(container.scrollWidth - container.clientWidth, 0);
-
-            setCanScrollLeft(container.scrollLeft > 8);
-            setCanScrollRight(container.scrollLeft < maxScrollLeft - 8);
-        };
 
         updateScrollState();
         container.addEventListener("scroll", updateScrollState, { passive: true });
@@ -78,7 +146,7 @@ export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent
             container.removeEventListener("scroll", updateScrollState);
             window.removeEventListener("resize", updateScrollState);
         };
-    }, [projects.cards.length]);
+    }, [projects.cards.length, updateScrollState]);
 
     useEffect(() => {
         const container = carouselRef.current;
@@ -87,58 +155,46 @@ export const ProjectsSection = ({ projects }: { projects: ProjectsSectionContent
             return;
         }
 
-        const speedPxPerMs = 0.045;
-        let animationFrameId = 0;
-        let previousTime = performance.now();
-        let resumeAt = previousTime + 800;
-
-        const pauseBriefly = () => {
-            resumeAt = performance.now() + 1400;
+        const pauseOnInteraction = () => {
+            pauseAutoplay();
         };
 
-        const tick = (time: number) => {
-            const maxScrollLeft = Math.max(container.scrollWidth - container.clientWidth, 0);
-            const elapsed = Math.min(time - previousTime, 64);
-            previousTime = time;
-
-            if (maxScrollLeft > 8 && time >= resumeAt) {
-                const nextScrollLeft = container.scrollLeft + elapsed * speedPxPerMs;
-                container.scrollLeft = nextScrollLeft >= maxScrollLeft - 1 ? 0 : nextScrollLeft;
+        const autoplayId = window.setInterval(() => {
+            if (document.hidden || Date.now() < autoplayPausedUntilRef.current) {
+                return;
             }
 
-            animationFrameId = window.requestAnimationFrame(tick);
-        };
+            const maxScrollLeft = Math.max(container.scrollWidth - container.clientWidth, 0);
 
-        container.addEventListener("pointerdown", pauseBriefly, { passive: true });
-        container.addEventListener("wheel", pauseBriefly, { passive: true });
-        container.addEventListener("touchstart", pauseBriefly, { passive: true });
-        animationFrameId = window.requestAnimationFrame(tick);
+            if (maxScrollLeft <= SCROLL_EDGE_THRESHOLD) {
+                updateScrollState();
+                return;
+            }
+
+            const isAtEnd = container.scrollLeft >= maxScrollLeft - SCROLL_EDGE_THRESHOLD;
+
+            container.scrollTo({
+                left: isAtEnd ? 0 : getDirectionalScrollTarget(container, "right"),
+                behavior: "smooth"
+            });
+        }, AUTO_SCROLL_INTERVAL_MS);
+
+        container.addEventListener("pointerdown", pauseOnInteraction, { passive: true });
+        container.addEventListener("wheel", pauseOnInteraction, { passive: true });
+        container.addEventListener("touchstart", pauseOnInteraction, { passive: true });
+        container.addEventListener("focusin", pauseOnInteraction);
 
         return () => {
-            container.removeEventListener("pointerdown", pauseBriefly);
-            container.removeEventListener("wheel", pauseBriefly);
-            container.removeEventListener("touchstart", pauseBriefly);
-            window.cancelAnimationFrame(animationFrameId);
+            container.removeEventListener("pointerdown", pauseOnInteraction);
+            container.removeEventListener("wheel", pauseOnInteraction);
+            container.removeEventListener("touchstart", pauseOnInteraction);
+            container.removeEventListener("focusin", pauseOnInteraction);
+            window.clearInterval(autoplayId);
         };
-    }, [projects.cards.length]);
-
-    const scrollCarousel = (direction: "left" | "right") => {
-        const container = carouselRef.current;
-
-        if (!container) {
-            return;
-        }
-
-        const delta = getCarouselScrollStep(container);
-
-        container.scrollBy({
-            left: direction === "left" ? -delta : delta,
-            behavior: "smooth"
-        });
-    };
+    }, [pauseAutoplay, projects.cards.length, updateScrollState]);
 
     return (
-        <section id="projects" className="scroll-mt-24 relative overflow-hidden border-b border-black/10 bg-[rgba(38,38,116,0.03)] md:overflow-visible">
+        <section id="projects" className="scroll-mt-24 relative overflow-hidden border-b border-black/10 bg-[rgba(38,38,116,0.03)]">
             <div className="absolute inset-0 blueprint-grid" />
             <div className="absolute inset-0 bg-white/72" />
 

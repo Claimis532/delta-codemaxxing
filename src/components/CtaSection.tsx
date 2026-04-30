@@ -10,7 +10,7 @@ export const CtaSection = () => {
     const { openContactModal } = useModalActions();
 
     return (
-        <section className="relative overflow-hidden md:overflow-visible">
+        <section className="relative overflow-hidden">
             <div className={`${containerClass} relative pb-12 pt-24 md:pb-10 md:pt-24`}>
                 <BrandWavePattern className="pointer-events-none absolute -left-28 top-[-20px] hidden h-[320px] w-[360px] opacity-[0.28] md:block" />
                 <BrandOrbitCluster className="pointer-events-none absolute -right-14 bottom-[-32px] hidden h-[260px] w-[320px] opacity-[0.32] md:block" />

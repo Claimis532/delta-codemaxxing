@@ -26,7 +26,7 @@ function BrandTile({ name, image }: { name: string; image: string }) {
 
 export function PartnersSection() {
     return (
-        <section id="partners" className="scroll-mt-24 relative overflow-hidden border-b border-black/10 bg-delta-paper py-20 md:overflow-visible md:py-24">
+        <section id="partners" className="scroll-mt-24 relative overflow-hidden border-b border-black/10 bg-delta-paper py-20 md:py-24">
             <div className={`${containerClass} relative`}>
                 <BrandSpark className="pointer-events-none absolute -right-6 -top-12 hidden h-[120px] w-[120px] opacity-[0.2] md:block" />
 
