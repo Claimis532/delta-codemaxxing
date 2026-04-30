@@ -21,6 +21,7 @@ export function AdminLogin() {
                 setIsError(!result.success);
 
                 if (result.success) {
+                    router.replace("/admin");
                     router.refresh();
                 }
             })();

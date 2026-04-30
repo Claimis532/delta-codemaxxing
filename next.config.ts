@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   // Убрали output: 'export', теперь это полноценное приложение
   images: {
     formats: ["image/avif", "image/webp"],
+    unoptimized: true,
     // Если будешь использовать картинки с внешних сайтов, их нужно добавить сюда:
     // remotePatterns: [{ protocol: 'https', hostname: 'example.com' }],
   },

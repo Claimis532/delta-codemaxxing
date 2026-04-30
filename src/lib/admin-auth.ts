@@ -5,6 +5,20 @@ import { cookies } from "next/headers";
 
 const ADMIN_COOKIE_NAME = "delta-admin-session";
 
+function shouldUseSecureAdminCookie() {
+    const value = process.env.ADMIN_COOKIE_SECURE?.trim().toLowerCase();
+
+    if (value === "true") {
+        return true;
+    }
+
+    if (value === "false") {
+        return false;
+    }
+
+    return process.env.NODE_ENV === "production";
+}
+
 function getCredentials() {
     const username = process.env.ADMIN_LOGIN?.trim() || "";
     const password = process.env.ADMIN_PASSWORD?.trim() || "";
@@ -48,7 +62,7 @@ export async function setAdminSession() {
     cookieStore.set(ADMIN_COOKIE_NAME, createSessionToken(credentials.username, credentials.password), {
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: shouldUseSecureAdminCookie(),
         path: "/",
         maxAge: 60 * 60 * 12
     });
